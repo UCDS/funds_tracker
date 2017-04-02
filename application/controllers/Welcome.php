@@ -14,7 +14,7 @@ class Welcome extends CI_Controller {
         if($this->session->logged_in == "YES"){
             $this->load->view('nav_bars/header');
             $this->load->view('nav_bars/left_nav');
-            $this->load->view('welcome_message');
+            $this->load->view('pages/bank_pages/bank_accounts_template');
             $this->load->view('nav_bars/footer');
         }else if($this->input->post('user_name') && $this->input->post('password')){
             $login_data = $this->user_model->login();
@@ -29,8 +29,11 @@ class Welcome extends CI_Controller {
                 $this->session->set_userdata($user_data);
                 $this->load->view('nav_bars/header');
                 $this->load->view('nav_bars/left_nav');
-                $this->load->view('welcome_message');
+                $this->load->view('pages/bank_pages/bank_accounts_template');
                 $this->load->view('nav_bars/footer');
+            }else{
+                $this->data['InvalidLogin'] = true;
+                $this->load->view('login_page',$this->data);
             }
         }else{
             $this->load->view('login_page');
@@ -39,6 +42,7 @@ class Welcome extends CI_Controller {
     
     function logout(){
         $this->session->sess_destroy();
-        $this->load->view('login_page');
+//		echo base_url();
+        redirect(base_url()+"/");
     }
 }

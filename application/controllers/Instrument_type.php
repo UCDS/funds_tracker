@@ -6,7 +6,7 @@ class Instrument_type extends CI_Controller{
     function __construct(){
         parent::__construct();        
         if($this->session->logged_in != 'YES'){
-            $this->load->view('login_page');
+            redirect(base_url()+"/");
         }
         $this->load->model('instrument_type_model');        
     }

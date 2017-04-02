@@ -4,12 +4,14 @@ class Cheque_book extends CI_Controller{
     function __construct() {
         parent::__construct();   
         if($this->session->logged_in != 'YES'){
-            $this->load->view('login_page');
+            redirect(base_url()+"/");
         }
         $this->load->model('cheque_book_model');
+	$this->load->model('bank_account_model');
     }
     
-    function index(){        
+    function index(){
+	$this->data['bankaccounts'] = $this->bank_account_model->get_bank_accounts();
         $this->load->view('nav_bars/header');
         $this->load->view('nav_bars/left_nav');
         $this->load->view('pages/bank_pages/cheque_book');

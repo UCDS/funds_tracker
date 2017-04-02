@@ -33,34 +33,37 @@
             <input type="submit" class="btn btn-default" value="Add" ng-disabled="addCheque_leaf.$invalid">
         </form>    
         
-        <h3>Cheque_leafs Added</h3>
-        
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>                    
-                    <th>Cheque book ID</th>
-                    <th>Cheque Leaf Number</th>
-                    <th>Status</th>                    
-                </tr>
-            </thead>
-            <tr class="success" ng-repeat="cheque_leaves in cheque_leavesCtrl.cheque_leaves">
-                <td ng-bind="cheque_leaves.cheque_book_id"></td>                
-                <td ng-bind="cheque_leaves.cheque_leaf_number"></td>
-                <td ng-bind="cheque_leaves.clearance_status"></td>                
-          <!--      <td ng-bind="cheque_leaves.cheque_leaves_group_name"></td> -->
-            </tr>
-            <tr class="active">
-                <td>{{ cheque_leavesCtrl.newCheque_leaf.cheque_book_id }}</td>                
-                <td>{{ cheque_leavesCtrl.newCheque_leaf.cheque_leaf_number }}</td>
-                <td>{{ cheque_leavesCtrl.newCheque_leaf.clearance_status }}</td>                
-     <!--           <td>{{ cheque_leavesCtrl.newCheque_leaf.cheque_leaves_group_id }}</td> -->
-            </tr>
-        </table>
-        
+        <div class="panel panel-yellow " style="margin-top:10px; ">
+		<div class="panel-heading"><i class="fa fa-bell fa-fw"></i>Cheque Leafs</div>
+		<table class="table table-hover tableevenodd">
+			<thead>
+				<tr>                    
+					<th>Cheque Book ID</th>
+					<th>Cheque Leaf Number</th>
+					<th>Status</th>                    
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="active">
+					<td ng-bind="cheque_leavesCtrl.newCheque_leaf.cheque_book_id"></td>                
+					<td ng-bind="cheque_leavesCtrl.newCheque_leaf.cheque_leaf_number"></td>
+					<td ng-bind="cheque_leavesCtrl.newCheque_leaf.clearance_status"></td>                
+		 <!--           <td>{{ cheque_leavesCtrl.newCheque_leaf.cheque_leaves_group_id }}</td> -->
+				</tr>
+				<tr ng-repeat="cheque_leaves in cheque_leavesCtrl.cheque_leaves">
+					<td ng-bind="cheque_leaves.cheque_book_id"></td>                
+					<td ng-bind="cheque_leaves.cheque_leaf_number"></td>
+					<td ng-bind="cheque_leaves.clearance_status"></td>                
+			  <!--      <td ng-bind="cheque_leaves.cheque_leaves_group_name"></td> -->
+				</tr>
+			</tbody>
+		</table>
+        </div>
         <script  src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.js"></script>
         <script>
           angular.module('cheque_leavesApp', [])
             .controller('Cheque_leafCtrl', ['$http', function($http) {
+		  $("#LefNaveChequeLeaf").addClass("active");
               var self = this;
               self.cheque_leaves = [];
               self.cheque_books = [];              
@@ -94,7 +97,52 @@
                     });
               };
               
-            }]);
+            }])
+            .factory('XHRCountsProv',[function(){
+              var vActiveXhrCount = 0;
+              return {
+                newCall : function(){
+                  vActiveXhrCount++;
+                },
+                endCall : function(){
+                  vActiveXhrCount--;
+                },
+                getActiveXhrCount : function(){
+                  return vActiveXhrCount;
+                }
+              };
+            }])
+            .factory('HttpInterceptor',['$q','XHRCountsProv',function($q,XHRCountsProv){
+              return {
+                request : function(config){
+                  XHRCountsProv.newCall();
+                  $(".BusyLoopMain").removeClass("BusyLoopHide").addClass("BusyLoopShow");
+                  return config;
+                },
+                requestError: function(rejection){
+                  XHRCountsProv.endCall();
+                  if(XHRCountsProv.getActiveXhrCount() == 0)
+                    $(".BusyLoopMain").removeClass("BusyLoopShow").addClass("BusyLoopHide");
+                  return $q.reject(rejection);
+                },
+                response:function(response){
+                  XHRCountsProv.endCall();
+                  if(XHRCountsProv.getActiveXhrCount() == 0)
+                    $(".BusyLoopMain").removeClass("BusyLoopShow").addClass("BusyLoopHide");
+                  return response;
+                },
+                responseError:function(rejection){
+                  XHRCountsProv.endCall();
+                  if(XHRCountsProv.getActiveXhrCount() == 0)
+                    $(".BusyLoopMain").removeClass("BusyLoopShow").addClass("BusyLoopHide");
+                  return $q.reject(rejection);
+                }
+
+              };
+            }])
+            .config(['$httpProvider',function($httpProvider){
+              $httpProvider.interceptors.push('HttpInterceptor');
+            }]);;
         </script>
     </div>
     </div>

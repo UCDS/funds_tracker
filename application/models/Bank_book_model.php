@@ -1,74 +1,341 @@
 <?php
 
 class Bank_book_model extends CI_Model{
-    
-    private $return_size = 300;
+
+    private $return_size = 3000;
     private $bank_book_information = array();
-    
+
     function __construct() {
         parent::__construct();
         
-        $post = (array)json_decode($this->security->xss_clean($this->input->raw_input_stream));      
-        
-        if(key_exists('account_id',$post)){
-            $this->bank_book_information['account_id'] = $post['account_id'];
+        if($this->input->post('account_id')){
+            $this->bank_book_information['bank_account_id'] = $this->input->post('account_id');
         }
-        if(key_exists('debit_credit',$post)){         //Values DEBIT, CREDIT
-            $this->bank_book_information['debit_credit'] = $post['debit_credit'];
+        if($this->input->post('debit_credit')){         //Values DEBIT, CREDIT
+            $this->bank_book_information['debit_credit'] = $this->input->post('debit_credit');
         }
-        if(key_exists('date',$post)){
-            $this->bank_book_information['date'] = $post['date'];
+        if($this->input->post('date')){
+            $this->bank_book_information['date'] = $this->input->post('date');
         }
-        if(key_exists('party_id',$post)){             //Party table.
-            $this->bank_book_information['party_id'] = $post['party_id'];
+        if($this->input->post('party_id')){             //Party table.
+            $this->bank_book_information['party_id'] = $this->input->post('party_id');
         }
-        if(key_exists('narration',$post)){
-            $this->bank_book_information['narration'] = $post['narration'];
+        if($this->input->post('narration')){
+            $this->bank_book_information['narration'] = $this->input->post('narration');
         }
-        if(key_exists('instrument_type_id',$post)){
-            $this->bank_book_information['instrument_type_id'] = $post['instrument_type_id'];
+        if($this->input->post('instrument_id_manual')){
+            $this->bank_book_information['instrument_id_manual'] = $this->input->post('instrument_id_manual');
         }
-        if(key_exists('instrument_id',$post)){
-            $this->bank_book_information['instrument_id'] = $post['instrument_id'];
+        if($this->input->post('instrument_type_id')){
+            $this->bank_book_information['instrument_type_id'] = $this->input->post('instrument_type_id');
         }
-        if(key_exists('instrument_date',$post)){
-            $this->bank_book_information['instrument_date'] = $post['instrument_date'];
+        if($this->input->post('instrument_id')){
+            $this->bank_book_information['instrument_id'] = $this->input->post('instrument_id');
         }
-        if(key_exists('bank_id',$post)){
-            $this->bank_book_information['bank_id'] = $post['bank_id'];
+        if($this->input->post('instrument_date')){
+            $this->bank_book_information['instrument_date'] = $this->input->post('instrument_date');
         }
-        if(key_exists('transaction_amount',$post)){
-            $this->bank_book_information['transaction_amount'] = $post['transaction_amount'];
+        if($this->input->post('bank_id')){
+            $this->bank_book_information['bank_id'] = $this->input->post('bank_id');
         }
-        if(key_exists('clearance_status',$post)){         // Values YES or NO
-            $this->bank_book_information['clearance_status'] = $post['clearance_status'];
+        if($this->input->post('transaction_amount')|| $this->input->post('transaction_amount') == 0){
+            $this->bank_book_information['transaction_amount'] = $this->input->post('transaction_amount');
         }
-        if(key_exists('clearance_date',$post)){
-            $this->bank_book_information['clearance_date'] = $post['clearance_date'];
-        }        
-        if(key_exists('bill_recieved',$post)){        // Values YES or NO
-            $this->bank_book_information['bill_recieved'] = $post['bill_recieved'];
+        if($this->input->post('clearance_status')){         // Values YES or NO
+            $this->bank_book_information['clearance_status'] = $this->input->post('clearance_status');
+        }else{
+			
+            $this->bank_book_information['clearance_status'] = 0;
+		}
+        if($this->input->post('clearance_date')){
+            $this->bank_book_information['clearance_date'] = $this->input->post('clearance_date');
         }
-        if(key_exists('notes',$post)){
-            $this->bank_book_information['notes'] = $post['notes'];
+        if($this->input->post('bill_recieved')){        // Values YES or NO
+            $this->bank_book_information['bill_recieved'] = $this->input->post('bill_recieved');
+        }else{
+            $this->bank_book_information['bill_recieved'] = 0;
+		}
+        if($this->input->post('notes')){
+            $this->bank_book_information['notes'] = $this->input->post('notes');
         }
-        if(key_exists('project_id',$post)){
-            $this->bank_book_information['project_id'] = $post['project_id'];
+        if($this->input->post('project_id')){
+            $this->bank_book_information['project_id'] = $this->input->post('project_id');
         }
-        $this->bank_book_information['insert_date_time'] = 'Time here';
-        $this->bank_book_information['user_id'] = 'User ID here';
+//        $this->bank_book_information['insert_date_time'] = 'Time here';
+//        $this->bank_book_information['user_id'] = 'User ID here';
+		if($this->input->post('transaction_id')){
+			$this->bank_book_information['transaction_id'] = $this->input->post('transaction_id');
+		}
     }
     
-    function add_bank_book(){
-        $this->db->insert('bank_book', $this->bank_book_information);        
-        return $this->db->insert_id();
-    }
+	/**
+	 * To get Present statement_balance of specified account.
+	 * 
+	 * If $transactionTime is present, account balance before or equal to that transaction with maximum of transaction id will be returned.
+	 * 
+	 * 
+	 * @param type $accountID
+	 * @param type $transactionTime
+	 * @return 
+	 */
+	private function get_account_balance($accountID,$transactionTime=0){
+		if($accountID){
+			$this->db->where('bank_account_id',$accountID);
+			if($transactionTime){
+				$this->db->where('date <= ',$transactionTime);
+			}
+			$this->db->select('bank_book.balance,bank_book.statement_balance')
+			->from('bank_book')
+			->order_by("bank_book.date", "desc")
+			->order_by("bank_book.transaction_id", "desc")
+			->limit("1");
+			$query = $this->db->get();
+			$result = $query->result();
+            return (sizeof($result) > 0 ? $result[0] : null);
+		}
+		return null;
+	}// get_account_balance
+	
+	/**
+	 * To get trasaction details of specified transaction id.
+	 * 
+	 * If $transactionID is present, account balance before that transaction will be returned.
+	 * 
+	 * 
+	 * @param type $accountID
+	 * @param type $transactionTime
+	 * @return account_balance or null
+	 */
+	private function get_transaction($transactionID){
+		if($transactionID){
+			$this->db->where('transaction_id',$transactionID);
+			$this->db->select('*')
+			->from('bank_book');
+			$query = $this->db->get();
+			$result = $query->result();
+            return (sizeof($result) > 0 ? $result[0] : null);
+		}
+		return null;
+	}// get_account_balance
+	
+	/**
+	 * To add and update a transaction
+	 * 
+	 * @return boolean
+	 */
+    function add_transaction(){
+		$present_tran_bal = floatval($this->bank_book_information['transaction_amount']);
+		///
+		/// Check whether transaction_id is exist in post request or not. If present update the record if not presend insert.
+		///
+		if(key_exists('transaction_id', $this->bank_book_information)){
+			
+			
+			$transactionDetails = $this->get_transaction($this->bank_book_information['transaction_id']);
+			if($transactionDetails != null){
+				$amountChage = false;
+				$clearanceChange = false;
+				$dateChange = false;
+				
+				///
+				/// Check which fields are changed
+				///
+				if($this->bank_book_information['date'] != $transactionDetails->date){
+					$dateChange = true;
+				}
+				if($this->bank_book_information['transaction_amount'] != $transactionDetails->transaction_amount){
+					$amountChage = true;
+				}
+				if($this->bank_book_information['clearance_status'] != $transactionDetails->clearance_status){
+					$clearanceChange = true;
+				}
+				
+				$account_bal = $transactionDetails->balance;
+				$account_stat_bal = $transactionDetails->statement_balance;
+				
+				if( $clearanceChange == true){
+					if($transactionDetails->clearance_status == 0){
+						// means clearance status changed from no to yes
+						if($this->bank_book_information["debit_credit"] == "Credit"){
+							// $account_bal = $transactionDetails->balance + $transactionDetails->transaction_amount;
+							$account_stat_bal = $transactionDetails->statement_balance + $transactionDetails->transaction_amount;
+						}else if($this->bank_book_information["debit_credit"] == "Debit"){
+							$account_stat_bal = $transactionDetails->statement_balance - $transactionDetails->transaction_amount;
+						}
+					}else{
+						// means clearance status changed from yes to no
+						if($this->bank_book_information["debit_credit"] == "Credit"){
+							// $account_bal = $transactionDetails->balance - $transactionDetails->transaction_amount;
+							$account_stat_bal = $transactionDetails->statement_balance - $transactionDetails->transaction_amount;
+						}else if($this->bank_book_information["debit_credit"] == "Debit"){
+							$account_stat_bal = $transactionDetails->statement_balance + $transactionDetails->transaction_amount;
+						}
+					}
+				}
+
+				if( $amountChage == true){
+					$amountdiff = 0;
+					if($this->bank_book_information["debit_credit"] == "Credit"){
+						$amountdiff = $transactionDetails->transaction_amount - floatval($this->bank_book_information['transaction_amount']);
+						$account_bal = $account_bal - $amountdiff;
+						if($this->bank_book_information['clearance_status'] == 1){
+							$account_stat_bal = $account_stat_bal - $amountdiff;
+						}
+					}
+					else if($this->bank_book_information["debit_credit"] == "Debit"){
+						$amountdiff = floatval($this->bank_book_information['transaction_amount']) - $transactionDetails->transaction_amount;
+						$account_bal = $account_bal - $amountdiff;
+						if($this->bank_book_information['clearance_status'] == 1){
+							$account_stat_bal = $account_stat_bal - $amountdiff;
+						}
+					}
+				}
+
+				$account_bal_diff = $account_bal - $transactionDetails->balance;
+				$account_stat_bal_diff = $account_stat_bal - $transactionDetails->statement_balance;
+
+				$this->bank_book_information["balance"] = $account_bal;
+				$this->bank_book_information["statement_balance"] = $account_stat_bal;
+				$this->bank_book_information["last_upate_date_time"] = date("Y-m-d H:i:s");
+				$transactionID = $this->bank_book_information['transaction_id'];
+				$this->db->where('transaction_id',$this->bank_book_information['transaction_id']);
+				unset($this->bank_book_information['transaction_id']);
+				$this->db->update('bank_book',$this->bank_book_information);
+				// echo $this->db->last_query();
+				if($account_bal_diff != 0 ){
+					$this->db->set('balance',"`balance` + $account_bal_diff",false);
+				}
+				if($account_stat_bal_diff != 0){
+					$this->db->set('statement_balance',"`statement_balance` + $account_stat_bal_diff",false);
+				}
+
+				if($account_bal_diff != 0  || $account_stat_bal_diff != 0){
+					$this->db->where('bank_account_id', $this->bank_book_information['bank_account_id']);
+					$this->db->where('date > ', $this->bank_book_information['date']);
+					$this->db->update('bank_book');
+
+					/**
+					 * Update transactions with same date and time with transaction id grater than updated transaction
+					 */
+					if($account_bal_diff != 0 ){
+						$this->db->set('balance',"`balance` + $account_bal_diff",false);
+					}
+					if($account_stat_bal_diff != 0){
+						$this->db->set('statement_balance',"`statement_balance` + $account_stat_bal_diff",false);
+					}
+
+					$this->db->where('transaction_id > ',$transactionID);
+					$this->db->where('bank_account_id', $this->bank_book_information['bank_account_id']);
+					$this->db->where('date = ', $this->bank_book_information['date']);
+					$this->db->update('bank_book'); 
+				}
+				return $transactionID;
+			}else{
+				return false;
+			}
+		}else{
+			
+			///
+			/// Get Present account balance from database
+			///
+			$account_balances = $this->get_account_balance($this->bank_book_information['bank_account_id'], $this->bank_book_information['date']);
+			$account_stat_bal = 0;
+			$account_bal = 0;
+			if($account_balances != null){
+				$account_stat_bal = $account_balances->statement_balance;
+				$account_bal = $account_balances->balance;
+			}
+			$balance = 0.00;
+			$statement_balance = 0.00;
+			
+
+			if($this->bank_book_information["debit_credit"] == "Credit"){
+				//$balance = $account_bal;
+				$balance = $account_bal + $present_tran_bal;
+				$statement_balance = $account_stat_bal;
+
+				if( key_exists('clearance_status', $this->bank_book_information) && $this->bank_book_information["clearance_status"] == "1"){
+					$statement_balance = $account_stat_bal + $present_tran_bal;
+				}
+			}else if($this->bank_book_information["debit_credit"] == "Debit"){
+				$balance = $account_bal - $present_tran_bal;
+				$statement_balance = $account_stat_bal;
+
+				if( key_exists('clearance_status', $this->bank_book_information) && $this->bank_book_information["clearance_status"] == "1"){
+					$statement_balance = $account_stat_bal - $present_tran_bal;
+				}
+
+			}
+			$this->bank_book_information["balance"] = $balance;
+			$this->bank_book_information["statement_balance"] = $statement_balance;
+
+			$this->db->trans_start();
+			///
+			/// Insert record into database
+			///
+			$this->db->insert('bank_book', $this->bank_book_information);
+			$insertID = $this->db->insert_id();
+
+			///
+			/// If prev balance and present statement_balance are not equal then update all transactions done after this transaction date
+			///
+			if($account_bal != $balance){
+				if($this->bank_book_information["debit_credit"] == "Debit"){
+					$this->db->set('balance',"`balance` -". floatval($this->bank_book_information['transaction_amount']),false);
+				}
+				else if($this->bank_book_information["debit_credit"] == "Credit"){
+					$this->db->set('balance',"`balance` +". floatval($this->bank_book_information['transaction_amount']),false);
+				}
+			}
+			if(key_exists('clearance_status', $this->bank_book_information) && $this->bank_book_information["clearance_status"] == "1" && $account_stat_bal != $statement_balance){
+				if($this->bank_book_information["debit_credit"] == "Credit"){
+					$this->db->set('statement_balance',"`statement_balance` +".floatval($this->bank_book_information['transaction_amount']),false);
+				}else if($this->bank_book_information["debit_credit"] == "Debit"){
+					$this->db->set('statement_balance',"`statement_balance` -".floatval($this->bank_book_information['transaction_amount']),false);
+				}
+			}
+			
+			if(( $account_bal != $balance )|| (key_exists('clearance_status', $this->bank_book_information) && $this->bank_book_information["clearance_status"] == "1" && $account_stat_bal != $statement_balance))
+			{
+				$this->db->where('bank_account_id', $this->bank_book_information['bank_account_id']);
+				$this->db->where('date > ', $this->bank_book_information['date']);
+				$this->db->update('bank_book'); 
+
+				/**
+				* Update transactions with same date and time with transaction id grater than updated transaction
+				*/
+				if($account_bal != $balance){
+					if($this->bank_book_information["debit_credit"] == "Debit"){
+						$this->db->set('balance',"`balance` -". floatval($this->bank_book_information['transaction_amount']),false);
+					}
+					else if($this->bank_book_information["debit_credit"] == "Credit"){
+						$this->db->set('balance',"`balance` +". floatval($this->bank_book_information['transaction_amount']),false);
+					}
+				}
+				if(key_exists('clearance_status', $this->bank_book_information) && $this->bank_book_information["clearance_status"] == "1" && $account_stat_bal != $statement_balance){
+					if($this->bank_book_information["debit_credit"] == "Credit"){
+						$this->db->set('statement_balance',"`statement_balance` +".floatval($this->bank_book_information['transaction_amount']),false);
+					}else if($this->bank_book_information["debit_credit"] == "Debit"){
+						$this->db->set('statement_balance',"`statement_balance` -".floatval($this->bank_book_information['transaction_amount']),false);
+					}
+				}
+				$this->db->where('transaction_id > ',$insertID);
+				$this->db->where('bank_account_id', $this->bank_book_information['bank_account_id']);
+				$this->db->where('date = ', $this->bank_book_information['date']);
+				$this->db->update('bank_book'); 
+			}
+			$this->db->trans_complete();
+			return $insertID;
+		}
+    }// add_transaction
     
-    function update_bank_book(){
+    function update_transaction(){
         $transaction_id = -1;                  // Non existent transaction id.
         $backup_information = array();
-        //Checking for the existance of key paramter needed for the update.
-        //Also getting the old record to create a edit log.
+		///
+        ///Checking for the existance of key paramter needed for the update.
+        ///Also getting the old record to create a edit log.
+		///
         if(key_exists('transaction_id', $this->bank_book_information)){
             $transaction_id = $post['transaction_id'];
             //Get the previous record.
@@ -102,13 +369,63 @@ class Bank_book_model extends CI_Model{
             $result = $query->result();
             return $result;
         }
-    }    
+    }// update_transaction
     
-    function get_bank_books(){
+	/**
+	 * 
+	 * To get transactions of a specified account between two dates
+	 * 
+	 * @param type $account_id_get
+	 * @return 
+	 */
+	function search_bank_books($account_id_get){
+		
+		$this->db->where('bank_book.bank_account_id', $account_id_get);
+		if($this->input->post('fromdate'))
+			$this->db->where('bank_book.date >=', $this->input->post('fromdate'));
+		if($this->input->post('todate'))
+			$this->db->where('bank_book.date <=', $this->input->post('todate')."23:59:59");
+		if($this->input->post('clearancestatus') || $this->input->post('clearancestatus') == '0'){
+			$this->db->where('bank_book.clearance_status', $this->input->post('clearancestatus'));
+			if($this->input->post('TranxType'))
+				$this->db->where('bank_book.debit_credit', $this->input->post('TranxType'));
+
+		}
+		
+
+		$this->db->select('bank_book.*,round(bank_book.balance,2) as balance_ui,'
+				. 'round(bank_book.statement_balance,2) as statement_balance_ui,'
+				. 'round(bank_book.transaction_amount,2) as transaction_amount_ui,party.party_name party_name, bank.bank_name bank_name,'
+					. 'instrument_type.instrument_type instrument_type,'
+					. 'project.project_name project_name')
+                ->from('bank_book')
+				->join('party','bank_book.party_id=party.party_id','left')
+				->join('instrument_type','bank_book.instrument_type_id=instrument_type.instrument_type_id','left')
+				->join('project','bank_book.project_id=project.project_id','left')
+				->join('bank','bank_book.bank_id=bank.bank_id','left')
+				->order_by("bank_book.date", "desc")
+				->order_by("bank_book.transaction_id", "desc")
+                ->limit("$this->return_size");
+        $query = $this->db->get();
+        // echo $this->db->last_query();
+        $result = $query->result();
+        return $result;
+	}// search_bank_books
+	
+    function get_bank_books($account_id_get){
         if(key_exists('transaction_id', $this->bank_book_information)){
             $transaction_id = $this->bank_book_information['transaction_id'];            
-            $this->db->select('*')
+            $this->db->select('bank_book.*, round(bank_book.balance,2) as balance_ui,'
+				. 'round(bank_book.statement_balance,2) as statement_balance_ui,'
+					. 'round(bank_book.transaction_amount,2) as transaction_amount_ui, party.party_name party_name, bank.bank_name bank_name,'
+					. 'instrument_type.instrument_type instrument_type,'
+					. 'project.project_name project_name')
                     ->from('bank_book')
+					->join('party','bank_book.party_id=party.party_id','left')
+					->join('instrument_type','bank_book.instrument_type_id=instrument_type.instrument_type_id','left')
+					->join('project','bank_book.project_id=project.project_id','left')
+					->join('bank','bank_book.bank_id=bank.bank_id','left')
+					->order_by("bank_book.date", "desc")
                     ->where('transaction_id', $transaction_id);
             $query = $this->db->get();           
             $result = $query->result();  
@@ -118,16 +435,32 @@ class Bank_book_model extends CI_Model{
             }else{
                 return $result;
             }            
-        }        
-        $this->db->select('*')
+        }    
+        $account_id='';
+        if($this->input->post('account_id')){
+            $account_id = $this->input->post('account_id');
+            $this->db->where('bank_account_id', $account_id);
+        }else if($account_id_get){
+            $this->db->where('bank_book.bank_account_id', $account_id_get);
+        }
+        $this->db->select('bank_book.*,round(bank_book.balance,2) as balance_ui,'
+				. 'round(bank_book.statement_balance,2) as statement_balance_ui,'
+				. 'round(bank_book.transaction_amount,2) as transaction_amount_ui,party.party_name party_name, bank.bank_name bank_name,'
+					. 'instrument_type.instrument_type instrument_type,'
+					. 'project.project_name project_name')
                 ->from('bank_book')
-                ->where($this->bank_book_information)
+				->join('party','bank_book.party_id=party.party_id','left')
+				->join('instrument_type','bank_book.instrument_type_id=instrument_type.instrument_type_id','left')
+				->join('project','bank_book.project_id=project.project_id','left')
+				->join('bank','bank_book.bank_id=bank.bank_id','left')
+        //        ->where($this->bank_book_information)
+				->order_by("bank_book.date", "desc")
+				->order_by("bank_book.transaction_id", "desc")
                 ->limit("$this->return_size");
         $query = $this->db->get();
         
         $result = $query->result();
         return $result;
-    }
+    }// get_bank_books
 }
-
 ?>

@@ -22,7 +22,6 @@ class User_model extends CI_Model{
         $query = $this->db->get();
         
         $result = $query->result_object();
-        var_dump($result);
         return $result;
     }
     

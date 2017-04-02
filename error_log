@@ -1,0 +1,127 @@
+[24-Aug-2016 13:01:05 UTC] PHP Fatal error:  Call to a member function get_projects() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Project.php on line 19
+[24-Aug-2016 13:02:02 UTC] PHP Fatal error:  Call to a member function select() on a non-object in /home/code4community/public_html/funds_tracker/application/models/Project_model.php on line 113
+[25-Aug-2016 10:27:09 UTC] PHP Fatal error:  Call to a member function set_userdata() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Project.php on line 11
+[25-Aug-2016 10:33:07 UTC] PHP Fatal error:  Call to undefined function base_url() in /home/code4community/public_html/funds_tracker/application/views/nav_bars/header.php on line 15
+[28-Aug-2016 10:15:17 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[28-Aug-2016 13:19:59 UTC] PHP Fatal error:  Array callback has to contain indices 0 and 1 in /home/code4community/public_html/funds_tracker/application/models/Project_model.php on line 18
+[28-Aug-2016 13:20:43 UTC] PHP Fatal error:  Array callback has to contain indices 0 and 1 in /home/code4community/public_html/funds_tracker/application/models/Project_model.php on line 18
+[28-Aug-2016 13:21:04 UTC] PHP Fatal error:  Array callback has to contain indices 0 and 1 in /home/code4community/public_html/funds_tracker/application/models/Project_model.php on line 18
+[02-Sep-2016 05:47:21 UTC] PHP Fatal error:  Cannot redeclare class Bank_book in /home/code4community/public_html/funds_tracker/application/models/Bank_book_model.php on line 131
+[02-Sep-2016 05:47:56 UTC] PHP Fatal error:  Cannot redeclare class Bank_book in /home/code4community/public_html/funds_tracker/application/models/Bank_book_model.php on line 131
+[02-Sep-2016 05:48:53 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 07:32:08 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 09:33:36 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 10:29:30 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 10:29:34 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 10:29:35 UTC] PHP Fatal error:  Cannot redeclare class Cheque_leaf in /home/code4community/public_html/funds_tracker/application/models/Cheque_leaf_model.php on line 98
+[02-Sep-2016 12:10:52 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 12:10:57 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 12:16:22 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[02-Sep-2016 12:56:45 UTC] PHP Fatal error:  Call to undefined method Cheque_book_model::get_cheque_books() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_book.php on line 26
+[02-Sep-2016 12:56:56 UTC] PHP Fatal error:  Call to undefined method Cheque_book_model::get_cheque_books() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_book.php on line 26
+[02-Sep-2016 14:15:48 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[03-Sep-2016 08:21:55 UTC] PHP Fatal error:  Call to undefined method Cheque_book_model::get_cheque_books() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_book.php on line 26
+[03-Sep-2016 08:22:32 UTC] PHP Fatal error:  Call to undefined method Cheque_book_model::get_cheque_books() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_book.php on line 26
+[03-Sep-2016 09:03:10 UTC] PHP Fatal error:  Call to undefined method Cheque_book_model::get_cheque_books() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_book.php on line 26
+[03-Sep-2016 09:11:33 UTC] PHP Fatal error:  Call to undefined method Cheque_book_model::get_cheque_books() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_book.php on line 26
+[03-Sep-2016 09:11:57 UTC] PHP Fatal error:  Call to undefined method Cheque_book_model::get_cheque_books() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_book.php on line 26
+[03-Sep-2016 11:27:31 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[03-Sep-2016 11:28:07 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[07-Sep-2016 05:24:55 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[07-Sep-2016 06:44:50 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:44:55 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:44:56 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:44:56 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:45:35 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:48:24 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:48:28 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:49:28 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:49:38 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:51:17 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:51:26 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:53:42 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:56:47 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:58:32 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 06:58:43 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:03:23 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:03:41 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:13 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:14 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:15 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:15 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:16 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:16 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:16 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:16 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:17 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:17 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:17 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:17 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:04:23 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:18:06 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 21
+[07-Sep-2016 07:19:33 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 21
+[07-Sep-2016 07:19:42 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 21
+[07-Sep-2016 07:28:56 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[07-Sep-2016 07:31:27 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:31:41 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 20
+[07-Sep-2016 07:40:08 UTC] PHP Fatal error:  Call to a member function add_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 21
+[07-Sep-2016 08:16:51 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[07-Sep-2016 08:23:24 UTC] PHP Fatal error:  Call to a member function get_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 25
+[07-Sep-2016 08:23:29 UTC] PHP Fatal error:  Call to a member function get_party() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Party.php on line 25
+[07-Sep-2016 11:55:45 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[08-Sep-2016 10:43:52 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[08-Sep-2016 10:49:08 UTC] PHP Fatal error:  Call to undefined method Cheque_leaf_model::get_cheque_leaves() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_leaf.php on line 25
+[08-Sep-2016 10:49:18 UTC] PHP Fatal error:  Call to undefined method Cheque_leaf_model::get_cheque_leaves() in /home/code4community/public_html/funds_tracker/application/controllers/Cheque_leaf.php on line 25
+[08-Sep-2016 11:00:18 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 12:04:11 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 12:07:15 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 12:07:19 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 12:07:37 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 12:07:41 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 12:13:48 UTC] PHP Fatal error:  Cannot redeclare class Bank_account in /home/code4community/public_html/funds_tracker/application/models/Bank_account_model.php on line 123
+[08-Sep-2016 12:14:13 UTC] PHP Fatal error:  Call to undefined method Bank_account_model::bank_accounts_information() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_account.php on line 25
+[08-Sep-2016 12:16:45 UTC] PHP Fatal error:  Call to undefined method Bank_account_model::bank_accounts_information() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_account.php on line 25
+[08-Sep-2016 12:22:59 UTC] PHP Fatal error:  Call to undefined method Bank_account_model::bank_accounts_information() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_account.php on line 25
+[08-Sep-2016 12:23:31 UTC] PHP Fatal error:  Call to undefined method Bank_account_model::add_bank_model() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_account.php on line 20
+[08-Sep-2016 12:23:32 UTC] PHP Fatal error:  Call to undefined method Bank_account_model::bank_accounts_information() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_account.php on line 25
+[08-Sep-2016 12:23:56 UTC] PHP Fatal error:  Call to undefined method Bank_account_model::bank_accounts_information() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_account.php on line 25
+[08-Sep-2016 12:27:14 UTC] PHP Fatal error:  Call to undefined method Bank_account_model::add_bank_model() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_account.php on line 20
+[08-Sep-2016 12:46:09 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 12:50:13 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 13:05:32 UTC] PHP Fatal error:  Call to a member function add_bank_book() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 20
+[08-Sep-2016 13:05:32 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 13:12:26 UTC] PHP Fatal error:  Call to a member function add_bank_book() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 20
+[08-Sep-2016 13:12:26 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 13:14:48 UTC] PHP Fatal error:  Call to a member function add_bank_book() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 20
+[08-Sep-2016 13:14:48 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 13:16:06 UTC] PHP Fatal error:  Call to a member function get_bank_books() on a non-object in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[08-Sep-2016 13:19:00 UTC] PHP Fatal error:  Call to undefined method Bank_book_model::get_bank_books() in /home/code4community/public_html/funds_tracker/application/controllers/Bank_book.php on line 25
+[10-Sep-2016 10:25:29 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Sep-2016 10:25:37 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Sep-2016 12:57:02 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/pages/bank_pages/bank_accounts_template.php on line 34
+[10-Sep-2016 12:58:09 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/pages/bank_pages/bank_accounts_template.php on line 34
+[10-Sep-2016 12:58:26 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/pages/bank_pages/bank_accounts_template.php on line 34
+[10-Sep-2016 12:58:52 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/pages/bank_pages/bank_accounts_template.php on line 34
+[10-Sep-2016 12:59:26 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/pages/bank_pages/bank_accounts_template.php on line 34
+[10-Sep-2016 13:04:59 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[16-Sep-2016 13:11:53 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[26-Oct-2016 18:21:41 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[29-Nov-2016 16:36:54 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[03-Dec-2016 12:02:10 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 13:09:02 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 13:09:13 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:21:17 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:23:21 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:25:08 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:29:01 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:29:03 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:29:43 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:29:46 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:30:17 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:30:30 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[10-Dec-2016 15:30:39 UTC] PHP Fatal error:  Call to undefined function form_open() in /home/code4community/public_html/funds_tracker/application/views/login_page.php on line 25
+[17-Feb-2017 05:54:15 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 9152 bytes) in /home/code4community/public_html/funds_tracker/application/controllers/UploadHandler.php on line 562
+[17-Feb-2017 05:54:34 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 9408 bytes) in /home/code4community/public_html/funds_tracker/application/controllers/UploadHandler.php on line 562
+[17-Feb-2017 05:55:00 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 9152 bytes) in /home/code4community/public_html/funds_tracker/application/controllers/UploadHandler.php on line 562
+[17-Mar-2017 06:21:41 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 12384 bytes) in /home/code4community/public_html/funds_tracker/application/controllers/UploadHandler.php on line 570
+[17-Mar-2017 06:21:59 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 12384 bytes) in /home/code4community/public_html/funds_tracker/application/controllers/UploadHandler.php on line 570

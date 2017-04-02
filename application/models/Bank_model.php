@@ -28,17 +28,24 @@ class Bank_model extends CI_Model {
         return $this->db->insert_id();
     }
     
+    function get_all_banks(){
+    	$this->db->select('bank.*')
+        	->from('bank');
+    	$query = $this->db->get();
+	$result = $query->result();
+        return $result;
+    }
+	
     function get_banks(){
         $post = (array)json_decode($this->security->xss_clean($this->input->raw_input_stream));
         $bank_filters = array();
-        if(key_exists('bank_id', $post)){
-            $bank_id = $post['bank_id'];
-            
+        $bank_id = key_exists('bank_id', $post) ? $post['bank_id'] : ($this->input->post('bank_id') ? $this->input->post('bank_id') : -1);
+	if($bank_id != -1){
             $this->db->select('bank.*')
                     ->from('bank')                    
                     ->where('bank_id', $bank_id);
-            $query = $this->db->get();            
-            $result = $query->result();            
+            $query = $this->db->get();
+            $result = $query->result();
             //Check for the existence of record.
             if(sizeof($result) == 0){
                 return -3;                      //Record does not exist, probably illegal access.
@@ -64,8 +71,8 @@ class Bank_model extends CI_Model {
                 ->where($bank_condition)
                 ->limit("$this->return_size");
         $query = $this->db->get();
-        
         $result = $query->result();
+        
         return $result;
     }
     

@@ -4,7 +4,7 @@ class Bank extends CI_Controller{
     function __construct() {
         parent::__construct();
         if($this->session->logged_in != 'YES'){
-            $this->load->view('login_page');
+           redirect(base_url()+"/");
         }
         $this->load->model('bank_model');
     }
@@ -21,6 +21,11 @@ class Bank extends CI_Controller{
         echo json_encode($bank_id);
     }
     
+    function get_all_banks(){
+        $banks_information = $this->bank_model->get_all_banks();
+        echo json_encode($banks_information);
+    }
+
     function get_banks(){
         $banks_information = $this->bank_model->get_banks();
         echo json_encode($banks_information);

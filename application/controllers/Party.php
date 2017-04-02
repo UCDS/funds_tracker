@@ -3,13 +3,13 @@
 class Party extends CI_Controller {    
     function __construct(){
         parent::__construct();        
-        if($this->session->logged_in != 'YES'){
-            $this->load->view('login_page');           
-        }        
         $this->load->model('party_model');        
     }
     
     function index(){
+        if($this->session->logged_in != 'YES'){
+            redirect(base_url()+"/");   
+        }        
         $this->load->view('nav_bars/header');
         $this->load->view('nav_bars/left_nav');
         $this->load->view('pages/party_pages/party');
@@ -17,8 +17,15 @@ class Party extends CI_Controller {
     }
     
     function add_party(){      
-        $party_id = $this->party_model->add_party();
-        echo json_encode($party_id);
+        if($this->session->logged_in != 'YES'){
+            $ResultData["Status"] = 1001;
+            $ResultData["ErroMsg"] = "Please login to access this data";
+			echo json_encode($ResultData);
+        }        
+        else{
+		$party_id = $this->party_model->add_party();
+		echo json_encode($party_id);
+	}
     }
     
     function get_party(){        
