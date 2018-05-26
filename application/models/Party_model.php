@@ -38,16 +38,24 @@ class Party_model extends CI_Model {
         if(key_exists('note', $post)){
             $this->party_information['note'] = $post['note'];        
         }
+        if(key_exists('party_id', $post)){
+            $this->party_information['party_id'] = $post['party_id'];        
+        }
         
         $this->party_information['insert_date_time'] = 'Time here';
         $this->party_information['user_id'] = 'User ID here';        
     }
     
-    function add_party(){       
-       
-        $this->db->insert('party', $this->party_information);
-        
-        return $this->db->insert_id();
+    function add_party(){
+       if(key_exists('party_id', $this->party_information)){
+            $this->db->where('party_id',$this->party_information['party_id']);
+            unset($this->party_information['party_id']);
+            $this->db->update('party',$this->party_information);
+            return true;
+        }else{
+            $this->db->insert('party', $this->party_information);
+            return $this->db->insert_id();
+        }
         
     }
     
@@ -110,8 +118,9 @@ class Party_model extends CI_Model {
         
         $this->db->select('*')
             ->from('party')
+			->order_by("party_name", "asc");
      //       ->where($this->party_information)
-            ->limit("$this->return_size");
+//            ->limit("$this->return_size");
         $query = $this->db->get();
         
         $result = $query->result();

@@ -4,7 +4,7 @@ class Project extends CI_Controller{
     function __construct() {
         parent::__construct();
         if($this->session->logged_in != 'YES'){
-            $this->load->view('login_page');
+            redirect(base_url()+"/");
         }
         $this->load->model('project_model');       
     }
@@ -18,17 +18,23 @@ class Project extends CI_Controller{
     
     function add_project(){        
         $project_id = $this->project_model->add_project();
-        echo json_encode($project_id);
+        $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode($project_id));
     }
     
     function get_projects(){        
         $projects_information = $this->project_model->get_projects();
-        echo json_encode($projects_information);
+        $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode($projects_information));
     }
     
     function get_project_groups(){
         $project_groups = $this->project_model->get_project_groups();
-        echo json_encode($project_groups);
+        $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode($project_groups));
     }
 }
 

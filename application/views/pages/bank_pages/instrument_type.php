@@ -8,26 +8,29 @@
         <input type="submit" class="btn btn-default" value="Add" ng-disabled="addInstrument.$invalid">
     </form>    
 
-    <h3>instruments Added</h3>
-
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>                    
-                <th>Instrument Name</th>                
-            </tr>
-        </thead>
-        <tr class="success" ng-repeat="instrument in instrumentCtrl.instruments">
-            <td ng-bind="instrument.instrument_type"></td>            
-        </tr>
-        <tr class="active">
-            <td>{{ instrumentCtrl.newInstrument.instrument_type }}</td>           
-        </tr>
-    </table>
-
+	<div class="panel panel-yellow " style="margin-top:10px; ">
+		<div class="panel-heading">Instruments</div>
+		<table class="table tableevenodd table-hover">
+			<thead>
+				<tr>                    
+					<th>Instrument Name</th>                
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="active">
+					<td ng-bind="instrumentCtrl.newInstrument.instrument_type"></td>           
+				</tr>
+				<tr ng-repeat="instrument in instrumentCtrl.instruments">
+					<td ng-bind="instrument.instrument_type"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
     <script  src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.js"></script>
     <script>
       angular.module('instrumentsApp', [])
         .controller('InstrumentCtrl', ['$http', function($http) {
+		  $("#LefNaveInstrumentType").addClass("active");
           var self = this;
           self.instruments = [];          
           self.newInstrument = {};
@@ -50,7 +53,52 @@
                 });
           };
 
-        }]);
+        }])
+        .factory('XHRCountsProv',[function(){
+          var vActiveXhrCount = 0;
+          return {
+            newCall : function(){
+              vActiveXhrCount++;
+            },
+            endCall : function(){
+              vActiveXhrCount--;
+            },
+            getActiveXhrCount : function(){
+              return vActiveXhrCount;
+            }
+          };
+        }])
+        .factory('HttpInterceptor',['$q','XHRCountsProv',function($q,XHRCountsProv){
+          return {
+            request : function(config){
+              XHRCountsProv.newCall();
+              $(".BusyLoopMain").removeClass("BusyLoopHide").addClass("BusyLoopShow");
+              return config;
+            },
+            requestError: function(rejection){
+              XHRCountsProv.endCall();
+              if(XHRCountsProv.getActiveXhrCount() == 0)
+                $(".BusyLoopMain").removeClass("BusyLoopShow").addClass("BusyLoopHide");
+              return $q.reject(rejection);
+            },
+            response:function(response){
+              XHRCountsProv.endCall();
+              if(XHRCountsProv.getActiveXhrCount() == 0)
+                $(".BusyLoopMain").removeClass("BusyLoopShow").addClass("BusyLoopHide");
+              return response;
+            },
+            responseError:function(rejection){
+              XHRCountsProv.endCall();
+              if(XHRCountsProv.getActiveXhrCount() == 0)
+                $(".BusyLoopMain").removeClass("BusyLoopShow").addClass("BusyLoopHide");
+              return $q.reject(rejection);
+            }
+
+          };
+        }])
+        .config(['$httpProvider',function($httpProvider){
+          $httpProvider.interceptors.push('HttpInterceptor');
+        }]);;
     </script>
 </div>
 </div>

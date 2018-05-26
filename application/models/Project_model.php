@@ -14,9 +14,9 @@ class Project_model extends CI_Model {
         if(key_exists('project_name',$post)){
             $project_information['project_name'] = $post['project_name'];
         }
-        if(key_exists('project_group_id',$post)){
+        /*if(key_exists('project_group_id',$post)){
             $project_information['project_group_id'] = $post['project_group_id'];
-        }
+        }*/
         if($this->input->post('note')){
             $project_information['note'] = $this->input->post('note');
         }
@@ -55,9 +55,9 @@ class Project_model extends CI_Model {
         if($this->input->post('project_name')){
             $project_information['project_name'] = $this->input->post('project_name');
         }
-        if($this->input->post('project_group_id')){
+        /*if($this->input->post('project_group_id')){
             $project_information['project_group_id'] = $this->input->post('project_group_id');
-        }
+        }*/
         if($this->input->post('note')){
             $project_information['note'] = $this->input->post('note');
         }        
@@ -81,13 +81,13 @@ class Project_model extends CI_Model {
         }        
     }
     
-    function get_projects(){
-        
+    function get_project(){
         if($this->input->post('project_id')){
             $project_id = $this->input->post('project_id');
             
             $this->db->select('project.*, project_group.project_group_name')
                     ->from('project')                    
+                    //->join('project_group','project_group.project_group_id = project.project_group_id')                
                     ->where('project_id', $project_id);
             $query = $this->db->get();            
             $result = $query->result();            
@@ -103,17 +103,28 @@ class Project_model extends CI_Model {
         if($this->input->post('project_name')){
             $project_condition['project_name'] = $this->input->post('project_name');
         }
-        if($this->input->post('project_group_id')){
+        /*if($this->input->post('project_group_id')){
             $project_condition['project_group_id'] = $this->input->post('project_group_id');
-        }
+        }*/
         if($this->input->post('note')){
             $project_condition['note'] = $this->input->post('note');
         }
         
         $this->db->select('*')
                 ->from('project')
-                ->join('project_group','project_group.project_group_id = project.project_group_id')
+                //->join('project_group','project_group.project_group_id = project.project_group_id','left')
                 ->where($project_condition)
+                ->limit("$this->return_size");
+        $query = $this->db->get();
+        
+        $result = $query->result();
+        return $result;        
+    }
+    
+    function get_projects(){        
+        $this->db->select('*')
+                ->from('project')
+                //->join('project_group','project_group.project_group_id = project.project_group_id','left')
                 ->limit("$this->return_size");
         $query = $this->db->get();
         

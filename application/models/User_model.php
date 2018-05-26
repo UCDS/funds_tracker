@@ -22,10 +22,30 @@ class User_model extends CI_Model{
         $query = $this->db->get();
         
         $result = $query->result_object();
-        var_dump($result);
         return $result;
     }
-    
+	
+	function validatePassword($userID, $pwd){
+        $this->db->select('*')
+                ->from('user')
+                ->where('user_id', $userID)
+                ->where('password', md5($pwd));
+        $query = $this->db->get();
+        
+        $result = $query->result_object();
+		if(sizeof($result) > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	function updatePassword($userID, $pwd){
+		$data["password"] = md5($pwd);
+		$this->db->where('user_id',$userID);
+		return $this->db->update('user',$data);
+	}
+			
     function get_user_functions(){
         return false;
     }

@@ -182,5 +182,18 @@ class CI_DB_mysqli_result extends CI_DB_result {
 	{
 		return $this->result_id->fetch_object($class_name);
 	}
+	
+	/* 
+	https://stackoverflow.com/questions/43232250/codeigniter-commands-out-of-sync-you-cant-run-this-command-now 
+	Added By : Pranay
+	Added On : 2017-07-23
+	*/
+	function next_result()
+	{
+		if (is_object($this->conn_id))
+		{
+			return mysqli_next_result($this->conn_id);
+		}
+	}// next_result
 
 }

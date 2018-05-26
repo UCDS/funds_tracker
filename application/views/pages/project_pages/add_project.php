@@ -8,38 +8,37 @@
               <label for="exampleInputName2">Project Name</label>
               <input type="text" class="form-control" ng-model="projectCtrl.newProject.project_name" required/>              
             </div>
-            <div class="form-group">
+            <!--<div class="form-group">
               <label for="exampleInputEmail2">Select Project Group</label>
               <select class="form-control" ng-model="projectCtrl.newProject.project_group_id" 
                   ng-options="group.project_group_id as group.project_group_name for group in projectCtrl.project_groups">                          
               </select>
-            </div>
+            </div>-->
             <input type="submit" class="btn btn-default" value="Add" ng-disabled="addProject.$invalid">
         </form>    
         
-        <h3>Projects Added</h3>
+        <h3>Projects</h3>
         
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>                    
                     <th>Project Name</th>
-                    <th>Project Group Name</th>
                 </tr>
             </thead>
-            <tr class="success" ng-repeat="project in projectCtrl.projects">
-                <td ng-bind="project.project_name"></td>
-                <td ng-bind="project.project_group_name"></td>
-            </tr>
-            <tr class="active">
-                <td>{{ projectCtrl.newProject.project_name }}</td>
-                <td>{{ projectCtrl.newProject.project_group_id }}</td>
-            </tr>
+			<tbody>
+				<tr class="active">
+					<td ng-bind="projectCtrl.newProject.project_name"></td>
+				</tr>
+				<tr class="success" ng-repeat="project in projectCtrl.projects">
+					<td ng-bind="project.project_name"></td>
+				</tr>
+            </tbody>
         </table>
-        
-        <script  src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.js"></script>
+
         <script>
           angular.module('projectsApp', [])
             .controller('ProjectCtrl', ['$http', function($http) {
+		  $("#LefNaveProject").addClass("active");
               var self = this;
               self.projects = [];
               self.project_groups = [];
@@ -47,7 +46,7 @@
               var fetchprojects = function() {
                 return $http.get('index.php/project/get_projects').then(
                     function(response) {
-                  self.projects = response.data;                  
+	                  self.projects = response.data;                  
                 }, function(errResponse) {
                   console.error(errResponse.data.msg);
                 });

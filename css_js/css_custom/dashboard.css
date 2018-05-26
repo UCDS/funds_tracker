@@ -52,7 +52,7 @@ body {
 /* Sidebar navigation */
 .nav-sidebar {
   margin-right: -21px; /* 20px padding + 1px border */
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-left: -20px;
 }
 .nav-sidebar > li > a {
@@ -63,7 +63,7 @@ body {
 .nav-sidebar > .active > a:hover,
 .nav-sidebar > .active > a:focus {
   color: #fff;
-  background-color: #428bca;
+  background-color: #9cca42;
 }
 
 
@@ -102,4 +102,68 @@ body {
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
+}
+
+.tableevenodd tbody tr:nth-child(even){ 
+	background: #d0e9c6;
+}
+
+.tableevenodd tbody tr:nth-child(odd){
+	background: #FFF;
+}
+.panel-yellow {
+	border-color: #f0ad4e;
+}
+.panel-yellow > .panel-heading {
+	border-color: #f0ad4e;
+	color: white;
+	background-color: #f0ad4e;
+}
+
+.panel-skyblue {
+	border-color: #0c69c7;
+}
+.panel-skyblue > .panel-heading {
+	border-color: #0c69c7;
+	color: white;
+	background-color: #0c69c7;
+}
+.panel-green {
+	border-color: #4bbd4f;
+}
+.panel-green > .panel-heading {
+	border-color: #4bbd4f;
+	color: white;
+	background-color: #4bbd4f;
+}
+
+.fa-buttons{
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.num-align{
+  text-align: right;
+}
+
+.file-count-icon i, .file-count-icon span{
+  cursor: pointer;
+}
+.file-count-icon{
+  font-size:20px;
+  position: relative;
+  /*display: block;
+  height: 50px;
+  width: 50px;*/
+  background-size: contain;
+  text-decoration: none;
+}
+
+.file-count{
+  position: absolute;
+  color: #fff;
+  left: 4px;
+  top: 4px;
+  color: #0012ff;
+  font-size: 12px;
 }

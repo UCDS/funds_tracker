@@ -9,9 +9,12 @@ class Bank_account_model extends CI_Model {
     function __construct() {
         parent::__construct();
         $post = (array)json_decode($this->security->xss_clean($this->input->raw_input_stream));
-        
+
         if(key_exists('account_name', $post)){
             $this->bank_account_information['account_name'] = $post['account_name'];
+        }
+        if(key_exists('bank_account_id', $post)){
+            $this->bank_account_information['bank_account_id'] = $post['bank_account_id'];
         }
         if(key_exists('account_id', $post)){
             $this->bank_account_information['account_id'] = key_exists('account_id', $post);
@@ -39,15 +42,25 @@ class Bank_account_model extends CI_Model {
         }
         if(key_exists('party_id', $post)){
             $this->bank_account_information['party_id'] = $post['party_id'];
-        }        
+        }
+        if(key_exists('bank_book', $post)){
+            $this->bank_account_information['bank_book'] = $post['bank_book'];
+        }
         
-        $this->bank_account_information['insert_date_time'] = 'Time here';
-        $this->bank_account_information['user_id'] = 'User ID here';        
+//        $this->bank_account_information['insert_date_time'] = 'Time here';
+//        $this->bank_account_information['user_id'] = 'User ID here';        
     }
     
     function add_bank_account(){
-        $this->db->insert('bank_account', $this->bank_account_information);        
-        return $this->db->insert_id();         
+		if(key_exists('bank_account_id', $this->bank_account_information)){
+			$this->db->where('bank_account_id',$this->bank_account_information['bank_account_id']);
+			unset($this->bank_account_information['bank_account_id']);
+			$this->db->update('bank_account',$this->bank_account_information);
+			return true;
+		}else{
+			$this->db->insert('bank_account', $this->bank_account_information);        
+			return $this->db->insert_id();
+		}
     }
     /*
     
@@ -97,10 +110,13 @@ class Bank_account_model extends CI_Model {
         if(key_exists('bank_account_id', $this->bank_account_information)){
             $bank_account_id = $this->bank_account_information['bank_account_id'];
             
-            $this->db->select('*')
+            $this->db->select('bank_account.*,party.party_name party_name, bank.bank_name bank_name')
                     ->from('bank_account')
+					->join('party','bank_account.party_id=party.party_id','left')
+					->join('bank','bank_account.bank_id=bank.bank_id','left')
+					->order_by('account_name',"asc")
                     ->where('bank_account_id', $bank_account_id);
-            $query = $this->db->get();            
+            $query = $this->db->get();
             $result = $query->result();            
             //Check for the existence of record.
             if(sizeof($result) == 0){
@@ -110,9 +126,12 @@ class Bank_account_model extends CI_Model {
             }            
         }
         
-        $this->db->select('*')
+        $this->db->select('bank_account.*,party.party_name party_name, bank.bank_name bank_name')
                 ->from('bank_account')
+				->join('party','bank_account.party_id=party.party_id','left')
+				->join('bank','bank_account.bank_id=bank.bank_id','left')
         //        ->where($this->bank_account_information)
+				->order_by('account_name',"asc")
                 ->limit("$this->return_size");
         $query = $this->db->get();
         
@@ -120,7 +139,113 @@ class Bank_account_model extends CI_Model {
  
         return $result;
     }
+    function search_bank_accounts(){
+		$bank_account_name = key_exists('account_name', $this->bank_account_information) ? $this->bank_account_information['account_name'] : "";
+		$bank_account_number = key_exists('account_number', $this->bank_account_information) ? $this->bank_account_information['account_number'] : "";
+
+		$this->db->select('bank_account.*,party.party_name party_name, bank.bank_name bank_name')
+				->from('bank_account')
+				->join('party','bank_account.party_id=party.party_id','left')
+				->join('bank','bank_account.bank_id=bank.bank_id','left')
+				->like('bank_account.account_name', $bank_account_name)
+				->like('bank_account.account_number', $bank_account_number)
+				->order_by('account_name',"asc");
+		$query = $this->db->get();            
+		$result = $query->result();            
+		//Check for the existence of record.
+		return $result;
+
+	}// search_bank_accounts
+
+	function get_bank_book_accounts(){
+
+		$this->db->select('bank_account.*,party.party_name party_name, bank.bank_name bank_name')
+				->from('bank_account')
+				->join('party','bank_account.party_id=party.party_id','left')
+				->join('bank','bank_account.bank_id=bank.bank_id','left')
+				->order_by('account_name')
+				->where('bank_book', 1);
+		$query = $this->db->get();            
+        $result = $query->result();
+		return $result;
+	}
+	
+//	function get_bank_book_accounts_details(){
+//
+//		$query = $this->db->query("select bankacnt.bank_account_id,bankacnt.party_id,bankacnt.account_number,bankacnt.account_name,tempparty.party_name party_name, tempbank.bank_name bank_name,
+//
+//(select round(balance,2) from bank_book where bank_account_id = bankacnt.bank_account_id  order by bank_book.date desc limit 1 ) as bankbookbalane,
+//(select max(last_upate_date_time) from bank_book where bank_account_id = bankacnt.bank_account_id ) as lastupatedatetime,
+//
+//(select round(statement_balance,2) from bank_book where bank_account_id = bankacnt.bank_account_id  order by bank_book.date desc limit 1 ) as bankbookstatementbalane,
+//
+//(select count(*) from bank_book where bank_account_id = bankacnt.bank_account_id and clearance_status = 0 and debit_credit = 'Debit' ) as debit_non_cleared_cnt,
+//
+//
+//(select cast(sum(transaction_amount) as decimal(10,2)) from bank_book where bank_account_id = bankacnt.bank_account_id and clearance_status = 0 and debit_credit = 'Debit' ) as debit_non_cleared_amonut,
+//
+//(select count(*) from bank_book where bank_account_id = bankacnt.bank_account_id and clearance_status = 0 and debit_credit = 'Credit' ) as credit_non_cleared_amonut,
+//
+//
+//(select cast(sum(transaction_amount) as decimal(10,2)) from bank_book where bank_account_id = bankacnt.bank_account_id and clearance_status = 0 and debit_credit = 'Credit' ) as credit_non_cleared_amonut
+//
+//from
+//
+//(select * from bank_account /*whr cls*/) bankacnt
+//left join party tempparty on tempparty.party_id = bankacnt.party_id
+//left join bank tempbank on tempbank.bank_id= bankacnt.bank_id");
+//		
+//	/*$this->db->select('bank_account.account_name, bank_account.account_number'
+//				. ',bank_account.bank_account_id,bank_account.bank_id'
+//				. ',party.party_name party_name, bank.bank_name bank_name, bank_book.balance, bank_book.statement_balance,'
+//				. 'bank_book.transaction_amount,bank_book.clearance_status, '
+//				. 'SUM(CASE WHEN clearance_status=0 AND debit_credit="Debit" THEN transaction_amount ELSE 0 END) as total_debits,'
+//				. 'SUM(CASE WHEN clearance_status=0 AND debit_credit="Debit" THEN 1 ELSE 0 END) as count_debits,'
+//				. 'SUM(CASE WHEN clearance_status=0 AND debit_credit="Credit" THEN transaction_amount ELSE 0 END) as total_credits,'
+//				. 'SUM(CASE WHEN clearance_status=0 AND debit_credit="Credit" THEN 1 ELSE 0 END) as count_credits,'
+//				. 'MAX(date)')
+//				->from('bank_account')
+//				->join('party','bank_account.party_id=party.party_id','left')
+//				->join('bank', 'bank_account.bank_id=bank.bank_id','left')
+//				->join('bank_book','bank_account.bank_account_id=bank_book.bank_account_id','left')
+//				->group_by('bank_book.bank_account_id')
+//				->order_by('account_name')
+//				->where('bank_book', 1);
+////	*/	
+////		$query = $this->db->get();
+//        $result = $query->result();
+//		return $result;
+//	}
     
+	
+	function get_bank_book_accounts_details(){
+
+		$this->db->select('bank_account.account_name, bank_account.account_number'
+				. ',bank_account.bank_account_id,bank_account.bank_id'
+				. ',party.party_name party_name, bank.bank_name bank_name,'
+				. 'bb.transaction_amount,bb.clearance_status, '
+				. 'ROUND(SUM(CASE WHEN clearance_status=0 AND debit_credit="Debit" THEN transaction_amount ELSE 0 END),2) as total_debits,'
+				. 'SUM(CASE WHEN clearance_status=0 AND debit_credit="Debit" THEN 1 ELSE 0 END) as count_debits,'
+				. 'ROUND(SUM(CASE WHEN clearance_status=0 AND debit_credit="Credit" THEN transaction_amount ELSE 0 END),2) as total_credits,'
+                . 'SUM(CASE WHEN clearance_status=0 AND debit_credit="Credit" THEN 1 ELSE 0 END) as count_credits,'
+                . 'SUM(CASE WHEN debit_credit="Credit" THEN transaction_amount ELSE transaction_amount*-1 END) as balance,'
+                . 'SUM(CASE WHEN clearance_status=1 AND debit_credit="Credit" THEN transaction_amount 
+                    WHEN clearance_status=1 and debit_credit="Debit" THEN transaction_amount*-1  END) as statement_balance,'
+				. 'DATE_FORMAT( MAX(bb.last_upate_date_time), "%d-%b-%Y %H:%i:%S" ) lastupatedatetime')
+				->from('bank_account')
+				->join('party','bank_account.party_id=party.party_id','left')
+				->join('bank', 'bank_account.bank_id=bank.bank_id','left')
+				->join('bank_book bb','bank_account.bank_account_id=bb.bank_account_id','left')
+				->group_by('bank_account.bank_account_id')
+//				->having('')
+				->order_by('account_name')
+				->where('bank_book', 1);
+		$query = $this->db->get();
+		// echo $this->db->last_query();
+        $result = $query->result();
+		return $result;
+	}
+
 }
 
 ?>
