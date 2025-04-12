@@ -1,0 +1,36 @@
+<?php
+
+class Items extends CI_Controller {    
+    function __construct(){
+        parent::__construct();        
+        $this->load->model('generic_model');        
+    }
+    
+    function index(){
+        //if($this->session->logged_in != 'YES'){
+            redirect(base_url()+"/");   
+        //}        
+        //$this->load->view('nav_bars/header');
+        //$this->load->view('nav_bars/left_nav');
+        //$this->load->view('pages/party_pages/party');
+        //$this->load->view('nav_bars/footer');
+    }
+	
+    function getItemsList(){
+//        if($this->session->logged_in != 'YES'){
+//            $ResultData["Status"] = 1001;
+//            $ResultData["ErroMsg"] = "Please login to access this data";
+//			$this->output
+//			->set_content_type('application/json')
+//			->set_output(json_encode($ResultData));
+//        }        
+//        else
+			{
+			$items = $this->generic_model->get_items_list();
+			$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($items));
+		}
+    }
+}
+?>
