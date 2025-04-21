@@ -23,6 +23,8 @@
 			  <li id="LefNaveLedgerReport"><a href="<?php echo base_url(); ?>report/ledger">Ledger</a></li>
 			  <li id="LefNavePaymentsReport"><a href="<?php echo base_url(); ?>report/payments">Payments</a></li>
 			  <li id="LefNaveReceiptsReport"><a href="<?php echo base_url(); ?>report/receipts">Receipts</a></li>
+			  <li <?php if (preg_match("^report/bank_book_edit_report$^", current_url()) || preg_match("^report/get_bank_book_edits^", current_url()) )
+				echo 'class="active"'; ?>><a href="<?php echo base_url(); ?>report/bank_book_edit_report">Book Edits</a></li>
 		  </ul>
 	  </li>
     </ul>
@@ -31,6 +33,10 @@
 		<li ><a>Masters</a>
 			<ul class="nav nav-sidebar" style="margin-left: 20px;">
 				<?php if($this->session->logged_in == 'YES'){ ?> 
+					<li <?php if (preg_match("^report/add_upd_opening_balance$^", current_url()) || 
+					preg_match("^report/insert_opening_balance^", current_url()) || preg_match("^report/update_opening_balance^", current_url())
+					|| preg_match("#report/add_upd_opening_balance(/[0-9]+)?$#", current_url()))
+						echo 'class="active"'; ?>><a href="<?php echo base_url(); ?>report/add_upd_opening_balance">Add / Update opening balance</a></li>
 					<li id="LefNaveParty"><a href="<?php echo base_url(); ?>party">Party</a></li>
 					<li id="LefNaveBank"><a href="<?php echo base_url(); ?>bank">Bank</a></li>
 				<?php } ?>

@@ -863,8 +863,6 @@
 							transaction_id: self.newBank_book.transaction_id,
 							changes: changedFields
 						};
-
-						// Send the change log to the backend via an HTTP POST request
 						$http.post('bank_book/save_ledger_transaction_changes', JSON.stringify(changeLog), {
 							headers: {
 								'Content-Type': 'application/json'

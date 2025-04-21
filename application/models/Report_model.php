@@ -367,5 +367,65 @@ class Report_model extends CI_Model {
         return $result;
     }
 	
+	function get_all_bank_edit_history()
+	{
+		if ($this->input->post('from_date') && $this->input->post('to_date')) {
+			$from_date = date("Y-m-d", strtotime($this->input->post('from_date')));
+			$to_date = date("Y-m-d", strtotime($this->input->post('to_date')));
+			$this->session->set_userdata('from_date', $from_date);
+			$this->session->set_userdata('to_date', $to_date);
+		}
+		else if ($this->session->userdata('from_date') && $this->session->userdata('to_date')) {
+			$from_date = $this->session->userdata('from_date');
+			$to_date = $this->session->userdata('to_date');
+		}
+		else {
+			$from_date = date("Y-m-d");
+			$to_date = $from_date;
+		}
+		$from_time = '00:00';
+		$to_time = '23:59';
+		
+		$this->db->select("edit_id,transaction_id,ledger_id,table_name,field_name,
+		previous_value,new_value,edit_date_time,edit_user_id,user.user_name,user.name",false);
+		$this->db->join('user','user.user_id=bank_book_edit_history.edit_user_id','left');
+		$this->db->from('bank_book_edit_history');
+		$this->db->where("(edit_date_time BETWEEN '$from_date $from_time' AND '$to_date $to_time')");
+		$resource=$this->db->get();
+		return $resource->result();
+	}
+
+	public function insert_opening_balance($data) {
+		return $this->db->insert('ledger_opening_balance', $data);
+	}
+
+	public function check_duplicate_opening_balance($date, $ledger_account_id, $amount) 
+	{
+		$this->db->where('date', $date);
+		$this->db->where('ledger_account_id', $ledger_account_id);
+		$this->db->where('balance', $amount);
+		$query = $this->db->get('ledger_opening_balance');
+	
+		return $query->num_rows() > 0;
+	}
+
+	public function check_duplicate_opening_balance_exclude_current($date, $ledger_account_id, $amount, $exclude_id)
+	{
+		$this->db->from('ledger_opening_balance');
+		$this->db->where('date', $date);
+		$this->db->where('ledger_account_id', $ledger_account_id);
+		$this->db->where('balance', $amount);
+		$this->db->where('id =', $exclude_id);
+
+		$query = $this->db->get();
+
+		return $query->num_rows() > 0;
+	}
+
+	public function update_opening_balance($id, $data)
+	{
+		$this->db->where('id', $id);
+		return $this->db->update('ledger_opening_balance', $data);
+	}
 }
 
