@@ -13,59 +13,27 @@
 <div class="container">
 	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 ">
 			<h3 style="text-align:center;">Add / Update Opening Balance</h3><br/>
-			<div class="col-lg-12">
-			<?php
-				$edit = isset($edit_ledger_opening_balance) ? $edit_ledger_opening_balance : [];
-			?>
-			<?php if(!empty($edit_ledger_opening_balance)) { ?>
-				<?php echo form_open('report/update_opening_balance',array('class'=>'row form-group','role'=>'form','id'=>'')); ?>
-			<?php } else { ?>
-				<?php echo form_open("report/insert_opening_balance",array('role'=>'form','class'=>'row form-custom','id'=>'')); ?> 
-			<?php } ?>
+		<div class="col-lg-12">
+			<?php echo form_open("report/add_upd_opening_balance",array('role'=>'form','class'=>'row form-custom','id'=>'')); ?> 
 				<div class="form-group col-lg-4 col-md-4 d-flex align-items-center">
-					<label for="date" class="me-2 mb-0">Date</label>
-					<input type="date" class="form-control" value="<?php echo !empty($edit['date']) ? $edit['date'] : date('Y-m-d'); ?>" name="date" required>
-				</div>  
-				<div class="form-group col-lg-4 col-md-4 d-flex align-items-center">
-					<label for="ledger_account" class="me-2 mb-0" style="white-space: nowrap;">Ledger Account</label>
-					<select name="ledger_account_id" class="form-control" onchange="fetchLatestAmount(this.value)" >
-						<option value="">-- Select Ledger Account --</option>
-						<?php
-						if (!empty($ledger_account)) {
-							$grouped = [];
-							foreach ($ledger_account as $account) {
-								$grouped[$account->account_type][] = $account;
-							}
-
-							foreach ($grouped as $type => $accounts) {
-								echo '<optgroup label="' . htmlspecialchars($type) . '">';
-								foreach ($accounts as $account) {
-									$selected = (!empty($edit['ledger_account_id']) && $edit['ledger_account_id'] == $account->ledger_account_id) ? 'selected' : '';
-									echo '<option value="' . $account->ledger_account_id . '" ' . $selected . '>' . htmlspecialchars($account->ledger_account_name) . '</option>';
-								}
-								echo '</optgroup>';
-							}
-						}
-						?>
-					</select>
+					<label for="date" class="me-2 mb-0">Select Date</label>
+					<input type="date" class="form-control" value="<?php 
+						if (!empty($this->input->post('date'))) { 
+							echo date('Y-m-d', strtotime($this->input->post('date'))); 
+						} else { 
+							echo date('Y-m-d'); 
+						} 
+					?>" 
+					name="date" required>
 				</div>
-				<div class="form-group col-lg-4 col-md-4 d-flex align-items-center">
-					<label for="amount" class="me-2 mb-0" style="white-space: nowrap;">Add Amount</label>
-					<input type="text" class="form-control" value="<?php echo !empty($edit['balance']) ? $edit['balance'] : ''; ?>" name="amount" placeholder="Add Amount" autocomplete="off" required>
-				</div>
-				<input type="hidden" name="record_id" value="<?php echo $edit['id']; ?>" >
 				<div class="col-lg-4 col-md-4">
-					<?php if(!empty($edit_ledger_opening_balance)) { ?>
-						<input class="btn btn-md btn-success" type="submit" value="Update" style="margin-top:25px;">
-					<?php } else { ?>
-						<input type="submit" class="btn btn-primary" value="Submit" style="margin-top: 25px;">
-					<?php } ?>
-					
+					<input type="submit" class="btn btn-primary" value="Search" style="margin-top: 25px;">
 				</div>
 			</form>
 		</div>
 	</div>
 </div><br/>
+
 <?php if (!empty($error) || $error!=0): ?>
 	<span class="col-md-offset-3" style="color: red;"><?php echo $error; ?></span>
 <?php elseif (isset($success)): ?>
@@ -73,132 +41,138 @@
 <?php endif; ?>
 
 <div class="container">
-	<div class="col-sm-9 col-sm-offset-3 text-left col-md-offset-1" style="margin-top: 20px;">
-	<h3 style="text-align:left;">List Opening Balances</h3><br/>
-		<div style="float: right;">
-			<input type="text" id="searchInput" class="form-control" placeholder="Search..." style="width: 200px;">
-		</div>
-		<div>
-			<?php if ($current_page > 1): ?>
-				<a href="?page=<?php echo $current_page - 1; ?>" class="btn btn-default" style="margin: 2px;color:black;">&laquo; Previous</a>
-			<?php endif; ?>
+    <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-1 ">
+        <?php if (!empty($ledger_opening_balances)) : ?>
+            <form method="post" action="<?= base_url('report/update_opening_balances') ?>">
+                <div class="table-responsive mt-4">
+                    <?php
+                        $grouped_data = [];
+                        foreach ($ledger_opening_balances as $row) {
+                            $grouped_data[$row->account_type][] = $row;
+                        }
 
-			<?php for ($p = 1; $p <= $total_pages; $p++): ?>
-				<a href="?page=<?php echo $p; ?>" 
-					class="btn btn-default <?php echo ($p == $current_page) ? 'active' : ''; ?>" 
-					style="margin: 2px; <?php echo ($p == $current_page) ? 'background-color: #007bff; color: #fff;' : ''; ?>">
-					<?php echo $p; ?>
-				</a>
-			<?php endfor; ?>
+                        $order = ['Income', 'Expenditure', 'Assets', 'Liabilities'];
+                        $sorted_grouped_data = [];
+                        foreach ($order as $type) {
+                            if (isset($grouped_data[$type])) {
+                                $sorted_grouped_data[$type] = $grouped_data[$type];
+                            }
+                        }
+                    ?>
+                    <?php foreach ($sorted_grouped_data as $account_type => $entries): ?>
+                        <h4 style="color:#e86507;"><?= ucfirst($account_type) ?></h4>
+						<style>
+							.table {
+								table-layout: fixed;
+								width: 100%;
+							}
 
-			<?php if ($current_page < $total_pages): ?>
-				<a href="?page=<?php echo $current_page + 1; ?>" class="btn btn-default" style="margin: 2px;color:black;">Next &raquo;</a>
-			<?php endif; ?>
-		</div><br/>
-	</div>
-	<div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-1 ">
-		<?php if (!empty($ledger_opening_balance)) : ?>
-			<div class="table-responsive mt-4">
-				<table class="table table-bordered table-striped" id="table-sort">
-					<thead class="table-dark">
-						<tr>
-							<th>#</th>
-							<th>Date</th>
-							<th>Ledger Account</th>
-							<th>Opening Balance</th>
-							<th>Inserted By</th>
-							<th>Inserted Time</th>
-							<th>Updated By</th>
-							<th>Updated Time</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php $i = 1 + (($current_page - 1) * 10); foreach ($paged_history as $row): ?>
-							<tr>
-								<td><?= $i++; ?></td>
-								<td><?= htmlspecialchars($row->date); ?></td>
-								<td>
-									<?php 
-										if (!empty($ledger_account)) {
-											foreach ($ledger_account as $account) {
-												if ($account->ledger_account_id == $row->ledger_account_id) {
-													echo htmlspecialchars($account->ledger_account_name);
-													break;
-												}
-											}
-										} else {
-											echo 'N/A';
-										}
-									?>
-								</td>
-								<td><?= number_format($row->balance); ?></td>
-								<td><?= !empty($row->name) ? $row->name : $row->user_name; ?></td>
-								<td><?= $row->insert_time; ?></td>
-								<td><?= !empty($row->updated_by_name) ? $row->updated_by_name : $row->updated_username; ?></td>
-								<td><?= $row->update_time; ?></td>
-								<td>
-									<a href="<?= base_url('report/add_upd_opening_balance/' . $row->id); ?>" title="Edit">
-										<i class="fa fa-edit text-primary"></i>
-									</a>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-			</div>
-		<?php else: ?>
-			<div class="alert alert-info mt-4">No opening balances found.</div>
-		<?php endif; ?>
-	</div>
+							.table th, .table td {
+								width: 25%;
+							}
+						</style>
+                        <table class="table table-bordered table-striped" id="table-sort">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="text-align: center;">#</th>
+                                    <th>Ledger Account</th>
+                                    <th>Balance Type</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+								<?php $i = 1; foreach ($entries as $entry): ?>
+									<tr>
+										<td style="text-align: center;"><?= $i++ ?></td>
+										<td><?= htmlspecialchars($entry->ledger_account_name) ?></td>
+										<td>
+											<label>
+												<input type="radio" name="balances[<?= $entry->ledger_account_id ?>][balance_type]" value="1"
+													<?= ($entry->balance_type == 1) ? 'checked' : '' ?>> Debit
+											</label>
+											<label>
+												<input type="radio" name="balances[<?= $entry->ledger_account_id ?>][balance_type]" value="2"
+													<?= ($entry->balance_type == 2) ? 'checked' : '' ?>> Credit
+											</label>
+										</td>
+										<td style="text-align:right;">
+											<input type="text" name="balances[<?= $entry->ledger_account_id ?>][balance]"
+												value="<?= htmlspecialchars($entry->balance) ?>" class="form-control text-right" />
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+                        </table>
+                    <?php endforeach; ?>
+                </div>
+				<!-- Totals Display -->
+				<div class="row mt-3 mb-3">
+					<div class="col-md-6">
+						<strong style="color: green;font-size:20px;">Total Debit: ₹ <span id="debit-total">0.00</span></strong>
+					</div>
+					<div class="col-md-6 text-right">
+						<strong style="color: red;font-size:20px;">Total Credit: ₹ <span id="credit-total">0.00</span></strong>
+					</div>
+				</div>
+				<br/>
+				<!-- Warning -->
+				<div id="balance-warning" class="alert alert-danger text-center mt-5" style="display:none;">
+					Debit and Credit totals must be equal or greater than 0 to save the opening balance.
+				</div>
+
+				<!-- Submit Button -->
+				<div class="text-center mt-4">
+					<button type="submit" class="btn btn-primary" id="save-btn" style="display:none;">Save Opening Balance</button>
+				</div><br/><br/>
+            </form>
+        <?php else: ?>
+            <div class="alert alert-info mt-4">No opening balances found.</div>
+        <?php endif; ?>
+    </div>
 </div>
 <script>
-	document.getElementById('searchInput').addEventListener('keyup', function() {
-		var filter = this.value.toUpperCase();
-		var table = document.getElementById('table-sort');
-		var rows = table.getElementsByTagName('tr');
+document.addEventListener('DOMContentLoaded', function () {
+    const submitBtn = document.getElementById('save-btn');
+    const notice = document.getElementById('balance-warning');
 
-		for (var i = 1; i < rows.length; i++) { 
-			var cells = rows[i].getElementsByTagName('td');
-			var rowContainsSearchTerm = false;
+    function calculateTotals() {
+        let debitTotal = 0;
+        let creditTotal = 0;
 
-			for (var j = 0; j < cells.length; j++) {
-				var cell = cells[j];
-				if (cell) {
-					if (cell.textContent.toUpperCase().indexOf(filter) > -1) {
-						rowContainsSearchTerm = true;
-						break;
-					}
-				}
-			}
-			if (rowContainsSearchTerm) {
-				rows[i].style.display = '';
-			} else {
-				rows[i].style.display = 'none';
-			}
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            const balance = parseFloat(input.value) || 0;
+            const id = input.name.match(/\d+/)[0];
+
+            const debitRadio = document.querySelector(`input[name="balances[${id}][balance_type]"][value="1"]`);
+            const creditRadio = document.querySelector(`input[name="balances[${id}][balance_type]"][value="2"]`);
+
+            if (debitRadio && debitRadio.checked) {
+                debitTotal += balance;
+            } else if (creditRadio && creditRadio.checked) {
+                creditTotal += balance;
+            }
+        });
+
+        document.getElementById('debit-total').textContent = debitTotal.toFixed(2);
+        document.getElementById('credit-total').textContent = creditTotal.toFixed(2);
+
+        if (
+			debitTotal.toFixed(2) === creditTotal.toFixed(2) &&
+			debitTotal > 0 && creditTotal > 0
+		) {
+			submitBtn.style.display = 'inline-block';
+			notice.style.display = 'none';
+		} else {
+			submitBtn.style.display = 'none';
+			notice.style.display = 'block';
 		}
-	});
+    }
+
+    calculateTotals();
+
+    document.querySelectorAll('input[type="radio"], input[type="text"]').forEach(el => {
+        el.addEventListener('change', calculateTotals);
+    });
+});
 </script>
 
-<script>
-	function fetchLatestAmount(ledgerAccountId) {
-		if (!ledgerAccountId) {
-			document.querySelector('input[name="amount"]').value = '';
-			return;
-		}
-
-		fetch('<?= base_url("report/get_available_amount") ?>/' + ledgerAccountId)
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					document.querySelector('input[name="amount"]').value = data.amount;
-				} else {
-					document.querySelector('input[name="amount"]').value = '';
-					alert('No amount found for this ledger account.');
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching amount:', error);
-			});
-	}
-</script>

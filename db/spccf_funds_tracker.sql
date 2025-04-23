@@ -644,3 +644,5 @@ CREATE TABLE `ledger_opening_balance` (
 ALTER TABLE `ledger_opening_balance` ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `ledger_opening_balance` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `ledger_opening_balance` ADD `balance_type` SMALLINT NOT NULL AFTER `ledger_account_id`;
