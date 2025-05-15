@@ -42,6 +42,8 @@ class Report_model extends CI_Model {
 			. 'SUM(CASE WHEN ldgr.debit_credit="Debit" THEN 1 ELSE 0 END) as PayTotalCnt,'
 			. 'ROUND(SUM(CASE WHEN ldgr.debit_credit="Debit" THEN ldgr.amount ELSE 0 END),2) as PayTotal')
 			->from('ledger ldgr')
+			->join('ledger_account','ledger_account.ledger_account_id = ldgr.ledger_account_id','left')
+			->join('ledger_opening_balance','ledger_opening_balance.ledger_account_id=ledger_account.ledger_account_id','left')
 			->where('ldgr.ledger_reference_table',1)
 			->join('bank_book bbook','bbook.transaction_id=ldgr.transaction_id','left')
 			->join('bank_account ba','ba.bank_account_id=bbook.bank_account_id','left');

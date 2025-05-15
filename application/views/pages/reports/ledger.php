@@ -37,6 +37,7 @@
 
 <div ng-app ="bank_accountsApp" id="PartyApp" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" style="padding-left:0px; padding-right:0px;">
     <div ng-controller ="LedgerReport as LedgerCtrl">
+	<!-- <pre>{{ LedgerCtrl | json }}</pre> -->
         <div ng-view></div>
 		<div class="col-lg-12">
 			<form class="form-inline" ng-show="LedgerCtrl.selectedDiv != '/LedgerDetails'" ng-submit="LedgerCtrl.searchData()" name="PartyReportForm">
@@ -119,35 +120,41 @@
 								<th rowspan="2">S.No.</th>
 								<th rowspan="2" ng-if="!LedgerCtrl.recentsearch.searchID">Account</th>
 								<th rowspan="2">Account Name</th>
+								<th colspan="2" style="text-align: center;">Opening Balance</th>
 								<th rowspan="2" ng-if="LedgerCtrl.recentsearch.searchBy == '7'">Project</th>
 								<th colspan="2" style="text-align: center;">Debits</th>
 								<th colspan="2" style="text-align: center;">Credits</th>
-								<th rowspan="2" style="text-align: center;" title="Balance Type">Bal. Type</th>
-								<th rowspan="2" style="text-align: center;" title="Balance">Balance</th>
+								<th colspan="2" style="text-align: center;">Period Balance</th>
 								<th colspan="6" ng-if="LedgerCtrl.recentsearch.searchBy == '8'" ng-repeat="(id,name) in LedgerCtrl.ProjectsList" ng-bind="name || 'Unassigned'" style="text-align: center;" ></th>
+								<th colspan="2" style="text-align: center;">Closing Balance</th>
 							</tr>
 							<tr>
+								<th >Bal. Type</th>
+								<th class="num-align">Balance</th>
 								<th >#</th>
 								<th class="num-align">Amount</th>
 								<th >#</th>
 								<th class="num-align">Amount</th>
-
+								<th >Bal. Type</th>
+								<th >Balance</th>
+								
 								<th ng-if="LedgerCtrl.recentsearch.searchBy == '8'" ng-repeat-start="(id,name) in LedgerCtrl.ProjectsList" >#</th>
 								<th ng-if="LedgerCtrl.recentsearch.searchBy == '8'" >Debit</th>
 								<th ng-if="LedgerCtrl.recentsearch.searchBy == '8'" >#</th>
 								<th ng-if="LedgerCtrl.recentsearch.searchBy == '8'" >Credit</th>
 								<th ng-if="LedgerCtrl.recentsearch.searchBy == '8'" >Bal Type</th>
 								<th ng-if="LedgerCtrl.recentsearch.searchBy == '8'" ng-repeat-end >Bal</th>
-
+								<th >Bal. Type</th>
+								<th class="num-align">Balance</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tbody ng-repeat="(acnttype,acntTypeData) in LedgerCtrl.PartiesData">
 								<tr ng-if="LedgerCtrl.recentsearch.searchBy == '1'">								
-									<td  colspan="{{LedgerCtrl.recentsearch.searchID ? 8 : 9}}" ng-bind="acnttype" style="background-color: #fbf9c9;"></td>
+									<td  colspan="{{LedgerCtrl.recentsearch.searchID ? 8 : 13}}" ng-bind="acnttype" style="background-color: #fbf9c9;"></td>
 								</tr>
 								<tr ng-if="LedgerCtrl.recentsearch.searchBy == '7'">								
-									<td  colspan="{{LedgerCtrl.recentsearch.searchID ? 9 : 10}}" ng-bind="acnttype" style="background-color: #fbf9c9;"></td>
+									<td  colspan="{{LedgerCtrl.recentsearch.searchID ? 9 : 14}}" ng-bind="acnttype" style="background-color: #fbf9c9;"></td>
 								</tr>
 								<tr ng-if="LedgerCtrl.recentsearch.searchBy == '8'">								
 									<td  colspan="{{LedgerCtrl.getColSpan()}}" ng-bind="acnttype" style="background-color: #fbf9c9;"></td>
@@ -158,6 +165,9 @@
 								</tr>
 								<tr ng-repeat="PartyData in TypePartiesData" ng-if="LedgerCtrl.recentsearch.searchBy != '7' && LedgerCtrl.recentsearch.searchBy != '8'">
 									<td ng-bind="PartyData.account_name"></td>
+									<!-- <td ng-bind="PartyData.ledger_account_id"></td> -->
+									<td ></td>
+									<td ></td>
 									<td class="num-align" ng-if=" LedgerCtrl.recentsearch.searchBy == '7'" ></td>
 									<td class="num-align" ng-bind="PartyData.PayTotalCnt"></td>
 									<td class="num-align link" ng-click="LedgerCtrl.showTrnxs(PartyData,'','Debit')" ng-bind="PartyData.PayTotal | currency:''"></td>
@@ -165,9 +175,14 @@
 									<td class="num-align link" ng-click="LedgerCtrl.showTrnxs(PartyData,'','Credit')" ng-bind="PartyData.RecptTotal | currency:''"></td>
 									<td ng-bind="(parseFloat(PartyData.PayTotal) > parseFloat(PartyData.RecptTotal)) ? 'Debit' : 'Credit'"></td>
 									<td class="num-align" ng-bind="(PartyData.PayTotal - PartyData.RecptTotal) | abs | currency:''"></td>
+									<td></td>
+									<td></td>
 								</tr>
+								
 								<tr ng-repeat-start="PartyData in TypePartiesData" ng-if="LedgerCtrl.recentsearch.searchBy == '7'">
 									<td ng-bind="LedgerCtrl.getAccountName(PartyData)"></td>
+									<td ></td>
+									<td ></td>
 									<td ng-if=" LedgerCtrl.recentsearch.searchBy == '7'" >
 										<!--<div ng-repeat="PrjctTrnx in PartyData">
 											<span ng-if="PrjctTrnx.project_name || PrjctTrnx.amount " ng-bind="(PrjctTrnx.project_name || 'Unassigned')+':'+ (PrjctTrnx.amount | currency:'')"></span>
@@ -179,10 +194,14 @@
 									<td class="num-align link" ng-click="LedgerCtrl.showTrnxs(PartyData,'','Credit')" ng-bind="LedgerCtrl.sumByFloat(PartyData,'RecptTotal') | currency:''"></td>
 									<td ng-bind="(parseFloat(LedgerCtrl.sumByFloat(PartyData,'PayTotal')) > parseFloat(LedgerCtrl.sumByFloat(PartyData,'RecptTotal'))) ? 'Debit' : 'Credit'"></td>
 									<td class="num-align" ng-bind="(LedgerCtrl.sumByFloat(PartyData,'PayTotal') - LedgerCtrl.sumByFloat(PartyData,'RecptTotal')) | abs | currency:''"></td>
+									<td></td>
+									<td></td>
 								</tr>
 
 
 								<tr ng-repeat-end ng-repeat="PrjctTrnx in PartyData" ng-if="LedgerCtrl.recentsearch.searchBy == '7'">
+									<td ></td>
+									<td ></td>
 									<td ></td>
 									<td class="num-align" ng-bind="PrjctTrnx.project_name || 'Unassigned'" ></td>
 									<td class="num-align" ng-bind="PrjctTrnx.PayTotalCnt"></td>
@@ -191,11 +210,15 @@
 									<td class="num-align link" ng-click="LedgerCtrl.showTrnxs(PrjctTrnx,'','Credit', PrjctTrnx.project_id)" ng-bind="PrjctTrnx.RecptTotal | currency:''"></td>
 									<td ng-bind="(parseFloat(PrjctTrnx.PayTotal) > parseFloat(PrjctTrnx.RecptTotal)) ? 'Debit' : 'Credit'"></td>
 									<td class="num-align" ng-bind="(PrjctTrnx.PayTotal - PrjctTrnx.RecptTotal) | abs | currency:''"></td>
+									<td></td>
+									<td></td>
 								</tr>
 
 
 								<tr ng-repeat="PartyData in TypePartiesData" ng-if="LedgerCtrl.recentsearch.searchBy == '8'">
 									<td ng-bind="LedgerCtrl.getAccountName(PartyData)"></td>
+									<td ></td>
+									<td ></td>
 									<td class="num-align" ng-bind="LedgerCtrl.sumByInt(PartyData,'PayTotalCnt')"></td>
 									<td class="num-align link" ng-click="LedgerCtrl.showTrnxs(PartyData,'','Debit')" ng-bind="LedgerCtrl.sumByFloat(PartyData,'PayTotal') | currency:''"></td>
 									<td class="num-align" ng-bind="LedgerCtrl.sumByInt(PartyData,'RecptTotalCnt')"></td>
@@ -222,7 +245,8 @@
 									<td ng-repeat-end ng-if="LedgerCtrl.recentsearch.searchBy == '8'">
 										<span ng-bind="(LedgerCtrl.getProjectAmount('Debit', id, PartyData) - LedgerCtrl.getProjectAmount('Credit', id, PartyData)) | abs | currency:''"></span>
 									</td>
-
+									<td></td>
+									<td></td>
 
 
 								</tr>
@@ -230,6 +254,8 @@
 
 								<tr class="TotalRecord" ng-repeat-end >
 									<td colspan="{{LedgerCtrl.recentsearch.searchID ? 2 : 3}}" style="text-align: right;">Total</td>
+									<td><span ng-bind="(first = LedgerCtrl.getFirstItem(TypePartiesData)) && first.balance_type == 1 ? 'Debit' : (first.balance_type == 2 ? 'Credit' : ' ')"></span></td>
+									<td class="text-right" ng-bind="LedgerCtrl.getOpeningBalanceTotal(TypePartiesData) | currency:''"></td>
 									<td ng-if="LedgerCtrl.recentsearch.searchBy == '7'"></td>
 									<td class="num-align" ng-bind="LedgerCtrl.sumByInt(TypePartiesData,'PayTotalCnt', (LedgerCtrl.recentsearch.searchBy == '7' || LedgerCtrl.recentsearch.searchBy == '8'))"></td>
 									<td class="num-align link" ng-bind="LedgerCtrl.sumByFloat(TypePartiesData,'PayTotal',(LedgerCtrl.recentsearch.searchBy == '7' || LedgerCtrl.recentsearch.searchBy == '8')) | currency:''" style="text-align: right;"></td>
@@ -256,13 +282,14 @@
 									<td ng-repeat-end ng-if="LedgerCtrl.recentsearch.searchBy == '8'">
 										<span ng-bind="(LedgerCtrl.getProjectTotalAmount('Debit', id, TypePartiesData) - LedgerCtrl.getProjectTotalAmount('Credit', id, TypePartiesData)) | abs | currency:''"></span>
 									</td>
-									
-									
-									
-									
+									<td ng-bind="LedgerCtrl.getDominantBalanceType(TypePartiesData)"></td>
+									<td class="text-right" ng-bind="LedgerCtrl.getFinalTotalAmountAdjusted(TypePartiesData) | currency:''"></td>
+
 								</tr>
 								<tr ng-if="LedgerCtrl.recentsearch.searchBy == '1' || LedgerCtrl.recentsearch.searchBy == '7' || LedgerCtrl.recentsearch.searchBy == '8'" class="AcntTypeTotal">
 									<td colspan="{{LedgerCtrl.recentsearch.searchID ? 2 : 3}}" ng-bind="acnttype + 'Total'" style="text-align: right;"></td>
+									<td></td>
+									<td class="text-right" ng-bind="LedgerCtrl.getOpeningBalanceTotalByType(acntTypeData) | currency:''"></td>
 									<td ng-if="LedgerCtrl.recentsearch.searchBy == '7'"></td>
 									<td class="num-align" ng-bind="LedgerCtrl.sumByInt(acntTypeData,'PayTotalCnt',true, (LedgerCtrl.recentsearch.searchBy == '7' || LedgerCtrl.recentsearch.searchBy == '8'))" ></td>
 									<td class="num-align" ng-bind="LedgerCtrl.sumByFloat(acntTypeData,'PayTotal',true, (LedgerCtrl.recentsearch.searchBy == '7' || LedgerCtrl.recentsearch.searchBy == '8')) | currency:''" ></td>
@@ -289,10 +316,14 @@
 									<td ng-repeat-end ng-if="LedgerCtrl.recentsearch.searchBy == '8'">
 										<span ng-bind="(LedgerCtrl.getProjectTotalAmount('Debit', id, acntTypeData, true) - LedgerCtrl.getProjectTotalAmount('Credit', id, acntTypeData, true)) | abs | currency:''"></span>
 									</td>
+									<td></td>
+									<td class="text-right" ng-bind="LedgerCtrl.getFinalTotalSumByAccountType(acntTypeData) | currency:''"></td>
 								</tr>
 							</tbody>
 							<tr class="Totaltr" ng-show="LedgerCtrl.PartiesData && keys(LedgerCtrl.PartiesData).length > 0">
 								<td colspan="{{LedgerCtrl.recentsearch.searchID ? 2 : 3 }}" style="text-align: right;">Grand Total</td>
+								<td ></td>
+								<td class="text-right" ng-bind="LedgerCtrl.getGrandOpeningBalanceTotal() | currency:''"></td>
 								<td ng-if="LedgerCtrl.recentsearch.searchBy == '7'"></td>
 								<td class="num-align" ng-bind="LedgerCtrl.getTotal('TPC')"></td>
 								<td class="num-align " ng-bind="LedgerCtrl.getTotal('TP') | currency:''" style="text-align: right;"></td> <?php //ng-click="LedgerCtrl.showTrnxs({},'','Debit')" ?>
@@ -320,8 +351,8 @@
 								<td ng-repeat-end ng-if="LedgerCtrl.recentsearch.searchBy == '8'">
 									<span ng-bind="(LedgerCtrl.getProjectTotalAmount('Debit', id, LedgerCtrl.PartiesData, true, true) - LedgerCtrl.getProjectTotalAmount('Credit', id, LedgerCtrl.PartiesData, true, true)) | abs | currency:''"></span>
 								</td>
-								
-								
+								<td></td>
+								<td class="text-right" ng-bind="LedgerCtrl.getGrandFinalTotalSum() | currency:''"></td>
 							</tr>
 							<tr class="success" align="center" ng-show="!LedgerCtrl.PartiesData || keys(LedgerCtrl.PartiesData).length == 0"><td colspan="14">There are no transactions for selected search criteria</td></tr>
 						</tbody>
@@ -455,7 +486,7 @@
 			return vPayTotal;
 		};
 		self.getColSpan = function(){
-			return (Object.keys(self.ProjectsList).length*6) + (self.recentsearch.searchID ? 9 : 10); 
+			return (Object.keys(self.ProjectsList).length*6) + (self.recentsearch.searchID ? 9 : 13); 
 		};
 		self.getRowSpan = function(vData){
 			if(self.recentsearch.searchBy == 7){
@@ -512,6 +543,10 @@
 							}
 						});
 						self.PartiesData = vParties;
+						// Get opening balance for each ledger_account_id
+						_.forEach(response.data, function(item) {
+						 	self.getOpeningBalance(item);
+						});
 					}else{
 						self.PartiesData = _.groupBy(response.data,"typename");
 						var v = self.PartiesData;
@@ -525,6 +560,176 @@
 				}
 			);
 
+		};
+		self.getOpeningBalance = function(item) {
+			var vTempSearch = { "ledger_account_id": item.ledger_account_id , "start_date": formatDate(self.search.startDate)};
+		 	return $http.post('<?php echo base_url(); ?>index.php/report/getOpeningBalance', vTempSearch).then(
+		 		function(response) {
+					console.log(response);
+		 			if (response.data && response.data.balance !== undefined) {
+		 				item.opening_balance = parseFloat(response.data.balance);
+						item.balance_type = parseInt(response.data.balance_type);
+		 			} else {
+		 				item.opening_balance = 0;
+		 			}
+		 		},
+		 		function(errResponse) {
+		 			item.opening_balance = 0;
+		 			console.error("Error fetching opening balance: " + errResponse.data.msg);
+		 		}
+		 	);
+		};
+		self.getOpeningBalanceTotal = function(data) {
+			return _.reduce(_.flattenDeep(_.values(data)), function(sum, item) {
+				if (item.account_name) {
+					return sum = parseFloat(item.opening_balance) || 0;
+				}
+				return sum;
+			}, 0);
+		};
+		self.getFirstItem = function(data) {
+			let flat = _.flatten(_.flatten(_.values(data)));
+			return flat[0] || {};
+		};
+		self.getOpeningBalanceTotalByType = function(acntTypeData) {
+			var total = 0;
+			var addedTypenames = {};
+			angular.forEach(acntTypeData, function(typenameGroup, typename) {
+				if (addedTypenames[typename]) return;
+				var flatItems = [];
+				if (typeof typenameGroup === 'object' && !Array.isArray(typenameGroup)) {
+					angular.forEach(typenameGroup, function(accountGroup) {
+						if (Array.isArray(accountGroup)) {
+							flatItems = flatItems.concat(accountGroup);
+						}
+					});
+				} 
+				else if (Array.isArray(typenameGroup)) {
+					flatItems = typenameGroup;
+				}
+
+				if (flatItems.length > 0) {
+					total += parseFloat(flatItems[0].opening_balance) || 0;
+					addedTypenames[typename] = true;
+				}
+			});
+
+			return total;
+		};
+		self.getFinalTotalAmountAdjusted = function(data) {
+			const isFiltered = self.recentsearch.searchBy === '7' || self.recentsearch.searchBy === '8';
+			const opening = self.getOpeningBalanceTotal(data) || 0;
+			const pay = self.sumByFloat(data, 'PayTotal', isFiltered) || 0;
+			const recpt = self.sumByFloat(data, 'RecptTotal', isFiltered) || 0;
+			const first = self.getFirstItem(data);
+			const openingType = first.balance_type;
+			if (opening === 0 && pay === 0 && recpt === 0) return 0;
+			const netDiff = Math.abs(pay - recpt);
+			const netType = pay > recpt ? 'Debit' : 'Credit';
+			if (!openingType || !netType) return 0;
+			if (
+				(openingType === 1 && netType === 'Debit') ||
+				(openingType === 2 && netType === 'Credit')
+			) {
+				return opening + netDiff;
+			} else if (openingType === 1 && netType === 'Credit') {
+				return Math.abs(opening - netDiff);
+			} else if (openingType === 2 && netType === 'Debit') {
+				return Math.abs(netDiff - opening);
+			}
+
+			return 0;
+		};
+		self.getDominantBalanceType = function(data) {
+			const isFiltered = self.recentsearch.searchBy === '7' || self.recentsearch.searchBy === '8';
+
+			const opening = self.getOpeningBalanceTotal(data) || 0;
+			const first = self.getFirstItem(data);
+			const openingType = first.balance_type; // 1 = Debit, 2 = Credit
+
+			const pay = self.sumByFloat(data, 'PayTotal', isFiltered) || 0;
+			const recpt = self.sumByFloat(data, 'RecptTotal', isFiltered) || 0;
+
+			const netDiff = Math.abs(pay - recpt);
+			const netType = pay > recpt ? 1 : (pay < recpt ? 2 : null); // 1 = Debit, 2 = Credit
+
+			// If either type is missing/null, show empty
+			if (!openingType || !netType) return '';
+
+			if (opening === 0 && netDiff === 0) return '';
+
+			if (opening > netDiff) {
+				return openingType === 1 ? 'Debit' : (openingType === 2 ? 'Credit' : '');
+			} else {
+				return netType === 1 ? 'Debit' : (netType === 2 ? 'Credit' : '');
+			}
+		};
+		self.getFinalTotalSumByAccountType = function(acntTypeData) {
+			let totalDebit = 0;
+			let totalCredit = 0;
+
+			const flattened = _.flattenDeep(_.values(acntTypeData));
+
+			angular.forEach(flattened, function(item) {
+				const opening = parseFloat(item.opening_balance) || 0;
+				const pay = parseFloat(item.PayTotal) || 0;
+				const recpt = parseFloat(item.RecptTotal) || 0;
+
+				if (!item.balance_type && pay === 0 && recpt === 0) {
+					return;
+				}
+
+				const netType = pay > recpt ? 1 : (pay < recpt ? 2 : null);
+				if (!item.balance_type || !netType) {
+					return;
+				}
+
+				let netAmount = 0;
+				let resultType = '';
+
+				if (item.balance_type === netType) {
+					netAmount = opening + Math.abs(pay - recpt);
+					resultType = item.balance_type;
+				} else {
+					const diff = Math.abs(pay - recpt);
+					netAmount = Math.abs(opening - diff);
+					resultType = (opening >= diff) ? item.balance_type : netType;
+				}
+
+				if (resultType === 1) {
+					totalDebit += netAmount;
+				} else if (resultType === 2) {
+					totalCredit += netAmount;
+				}
+			});
+			return totalCredit - totalDebit;
+		};
+		self.sumByFloat = function(data, key, filtered) {
+			let total = 0;
+			const flatData = _.flattenDeep(_.values(data));
+			flatData.forEach(item => {
+				if (!filtered || item) {
+					total += parseFloat(item[key]) || 0;
+				}
+			});
+			return total;
+		};
+		self.getGrandFinalTotalSum = function() {
+			let grandTotal = 0;
+
+			angular.forEach(self.PartiesData, function(acntTypeData) {
+				const total = self.getFinalTotalSumByAccountType(acntTypeData);
+				grandTotal += total;
+			});
+
+			return grandTotal;
+		};
+		self.getGrandOpeningBalanceTotal = function() {
+			let grandTotal = 0;
+			angular.forEach(self.PartiesData, function(acntTypeData) {
+				grandTotal += self.getOpeningBalanceTotalByType(acntTypeData);
+			});
+			return grandTotal;
 		};
 		self.getPartyName = function(vPartID){
 			var vPartyName = "";
@@ -882,4 +1087,12 @@
 		  return Math.abs(val);
 		}
 	});
+	function formatDate(date) {
+		var d = new Date(date);
+		var year = d.getFullYear();
+		var month = (d.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so we add 1
+		var day = d.getDate().toString().padStart(2, '0');
+		return year + '-' + month + '-' + day;
+	}
+
 </script>

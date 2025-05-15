@@ -3,6 +3,9 @@
 class Report extends CI_Controller{
     function __construct() {
         parent::__construct();
+        if($this->session->logged_in != 'YES'){
+            redirect(base_url()+"/");
+         }
         $this->load->model('report_model');
         $this->load->model('bank_model');
         $this->load->model('bank_account_model');
@@ -250,104 +253,131 @@ class Report extends CI_Controller{
 
     public function add_upd_opening_balance()
     {
-        date_default_timezone_set('Asia/Kolkata');
+        // if($this->session->logged_in != 'YES'){
+        //     $ResultData["Status"] = 1001;
+        //     $ResultData["ErroMsg"] = "Please login to access this data";
+        //     $this->output
+        //     ->set_content_type('application/json')
+        //     ->set_output(json_encode($ResultData));
+        // }else{
+            date_default_timezone_set('Asia/Kolkata');
 
-        $this->load->view('nav_bars/header');
-        $this->load->view('nav_bars/left_nav');
+            $this->load->view('nav_bars/header');
+            $this->load->view('nav_bars/left_nav');
 
-        $ledger_accounts = $this->generic_model->get_ledger_accounts_list(); // all accounts
-        $existing_balances = $this->generic_model->get_ledger_opening_balance_list(); // only in lob
+            $ledger_accounts = $this->generic_model->get_ledger_accounts_list(); 
+            $existing_balances = $this->generic_model->get_ledger_opening_balance_list();
 
-        $existing_ids = array_map(function($obj) {
-            return $obj->ledger_account_id;
-        }, $existing_balances);
+            $existing_ids = array_map(function($obj) {
+                return $obj->ledger_account_id;
+            }, $existing_balances);
 
-        foreach ($ledger_accounts as $acc) {
-            if (!in_array($acc->ledger_account_id, $existing_ids)) {
-                $dummy = new stdClass();
-                $dummy->id = 0;
-                $dummy->ledger_account_id = $acc->ledger_account_id;
-                $dummy->ledger_account_name = $acc->ledger_account_name;
-                $dummy->account_type = $acc->account_type;
-                $dummy->balance = 0;
-                $dummy->balance_type = 0;
-                $dummy->user_name = '';
-                $dummy->name = '';
-                $dummy->updated_username = '';
-                $dummy->updated_by_name = '';
-
-                $existing_balances[] = $dummy;
+            foreach ($ledger_accounts as $acc) {
+                if (!in_array($acc->ledger_account_id, $existing_ids)) {
+                    $dummy = new stdClass();
+                    $dummy->id = 0;
+                    $dummy->ledger_account_id = $acc->ledger_account_id;
+                    $dummy->ledger_account_name = $acc->ledger_account_name;
+                    $dummy->account_type = $acc->account_type;
+                    $dummy->balance = 0;
+                    $dummy->balance_type = 0;
+                    $dummy->user_name = '';
+                    $dummy->name = '';
+                    $dummy->updated_username = '';
+                    $dummy->updated_by_name = '';
+                    $existing_balances[] = $dummy;
+                }
             }
-        }
 
-        $this->data['ledger_opening_balances'] = $existing_balances;
-        $this->load->view('pages/party_pages/add_update_opening_bal', $this->data);
-        $this->load->view('nav_bars/footer');
+            $this->data['ledger_opening_balances'] = $existing_balances;
+            $this->load->view('pages/party_pages/add_update_opening_bal', $this->data);
+            $this->load->view('nav_bars/footer');
+        //}
     }
 
 
     public function update_opening_balances()
-{
-    date_default_timezone_set('Asia/Kolkata');
-    $this->load->model('generic_model');
+    {
+        date_default_timezone_set('Asia/Kolkata');
+        $this->load->model('generic_model');
 
-    $data = $this->input->post('balances');
-    $user_id = $this->session->userdata('user_id'); // Adjust based on your session
+        $data = $this->input->post('balances');
+        $user_id = $this->session->userdata('user_id');
 
-    $update_count = 0;
-    $insert_count = 0;
+        $update_count = 0;
+        $insert_count = 0;
 
-    foreach ($data as $ledger_account_id => $row) {
-        $balance = floatval($row['balance']);
-        $balance_type = intval($row['balance_type']);
+        foreach ($data as $ledger_account_id => $row) {
+            $balance = floatval($row['balance']);
+            $balance_type = intval($row['balance_type']);
 
-        // Condition 3: Skip if both balance and type are 0
-        if ($balance == 0 && $balance_type == 0) {
-            continue; // Skip this entry
-        }
+            if ($balance == 0 && $balance_type == 0) {
+                continue; 
+            }
+            $existing = $this->db->select('*')
+                ->from('ledger_opening_balance')
+                ->where('ledger_account_id', $ledger_account_id)
+                ->where('DATE_FORMAT(date, "%Y-%m") =', date('Y-m'))
+                ->get()
+                ->row();
 
-        // Check if record already exists in DB
-        $existing = $this->db->get_where('ledger_opening_balance', ['ledger_account_id' => $ledger_account_id])->row();
-
-        if ($existing) {
-            // Condition 1: Balance exists in DB and is modified, Update the record
-            if ($existing->balance != $balance || $existing->balance_type != $balance_type) {
-                $this->db->where('ledger_account_id', $ledger_account_id);
-                $this->db->update('ledger_opening_balance', [
+            if ($existing) {
+                if ($existing->balance != $balance || $existing->balance_type != $balance_type) {
+                    $this->db->where('id', $existing->id);
+                    $this->db->update('ledger_opening_balance', [
+                        'balance' => $balance,
+                        'balance_type' => $balance_type,
+                        'update_by' => $user_id,
+                        'update_time' => date('Y-m-d H:i:s')
+                    ]);
+                    $update_count++;
+                }
+            } else {
+                $this->db->insert('ledger_opening_balance', [
+                    'date' => date('Y-m-d'),
+                    'ledger_account_id' => $ledger_account_id,
                     'balance' => $balance,
                     'balance_type' => $balance_type,
-                    'update_by' => $user_id,
-                    'update_time' => date('Y-m-d H:i:s')
+                    'insert_by' => $user_id,
+                    'insert_time' => date('Y-m-d H:i:s')
                 ]);
-                $update_count++;
+                $insert_count++;
             }
-        } else {
-            // Condition 2: No record exists and value is entered, Insert the record
-            $this->db->insert('ledger_opening_balance', [
-                'ledger_account_id' => $ledger_account_id,
-                'balance' => $balance,
-                'balance_type' => $balance_type,
-                'insert_by' => $user_id,
-                'insert_time' => date('Y-m-d H:i:s')
-            ]);
-            $insert_count++;
         }
+
+        if ($update_count > 0 || $insert_count > 0) {
+            $this->data['success'] = 'Opening balances updated successfully.';
+        } else {
+            $this->data['error'] = 'No data to update.';
+        }
+
+        $this->load->view('nav_bars/header');
+        $this->load->view('nav_bars/left_nav');
+        $this->load->view('pages/party_pages/add_update_opening_bal', $this->data);
+        $this->load->view('nav_bars/footer');
     }
 
-    // Check if any update or insert happened
-    if ($update_count > 0 || $insert_count > 0) {
-        $this->data['success'] = 'Opening balances updated successfully.';
-    } else {
-        $this->data['error'] = 'No data to update.';
+    public function getOpeningBalance() 
+    {
+        $ledger_account_id = $this->input->post('ledger_account_id');
+        $from_date = $this->input->post('start_date');
+        $this->db->select('balance, balance_type');
+        $this->db->from('ledger_opening_balance');
+        $this->db->where('ledger_account_id', $ledger_account_id);
+        $this->db->where('date', $from_date);
+        $query = $this->db->get();
+        $data = $query->row_array();
+        
+        // if (!$data) {
+        //     $data = ['balance' => 0, 'balance_type' => 1];
+        // }
+    
+        // if ($data['balance_type'] == 1) {
+        //     $data['balance'] = -$data['balance'];
+        // }
+        
+        echo json_encode($data);
     }
-
-    // Pass the success/error message to the view
-    $this->load->view('nav_bars/header');
-    $this->load->view('nav_bars/left_nav');
-    $this->load->view('pages/party_pages/add_update_opening_bal', $this->data);
-    $this->load->view('nav_bars/footer');
-}
-
 }
 
 ?>
