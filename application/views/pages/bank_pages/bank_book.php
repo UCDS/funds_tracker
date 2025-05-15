@@ -183,7 +183,7 @@
 									
 									</th>
 									<th>
-										<input type="text" ng-model="ledgerrecord.narration" style="width:70px;"/>
+										<textarea ng-model="ledgerrecord.narration" style="width:70px;" row="10" cols="10"></textarea>
 									</th>
 									<th>
 										<select required style="width:115px;" ng-model="ledgerrecord.payee_party_id" ng-options="party.party_id as party.party_name for party in bank_bookCtrl.parties">
