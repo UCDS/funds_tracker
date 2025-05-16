@@ -78,7 +78,8 @@
 				</div>
 				<div class=" form-group col-lg-4 col-md-6">
 					<label for="exampleInputName2">Narration</label>
-					<input type="text" class="form-control" name="narration" ng-model="bank_bookCtrl.newBank_book.narration"/>
+					<!-- <input type="text" class="form-control" name="narration" ng-model="bank_bookCtrl.newBank_book.narration"/> -->
+					<textarea class="form-control" name="narration" ng-model="bank_bookCtrl.newBank_book.narration" style="max-width: 100%;" row="10" cols="10"> </textarea>
 				</div>
 				<div class=" form-group col-lg-4 col-md-6">
 					<label for="exampleInputName2">Instrument Type</label>
@@ -145,7 +146,8 @@
 				</div>
 				<div class=" form-group col-lg-4 col-md-6">
 					<label for="exampleInputName2">Notes</label>
-					<input type="text" class="form-control" name="notes" ng-model="bank_bookCtrl.newBank_book.notes"/>              
+					<!-- <input type="text" class="form-control" name="notes" ng-model="bank_bookCtrl.newBank_book.notes"/>               -->
+					<textarea class="form-control" name="notes" ng-model="bank_bookCtrl.newBank_book.notes" style="max-width: 100%;" row="10" cols="10"></textarea>              
 				</div>
 				<div class="col-sm-12 col-md-12">
 					<h4>Ledger
