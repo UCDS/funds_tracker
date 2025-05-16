@@ -668,7 +668,19 @@
 			let totalDebit = 0;
 			let totalCredit = 0;
 
-			const flattened = _.flattenDeep(_.values(acntTypeData));
+			const flattened = _.flattenDeep(_.map(acntTypeData, typenameGroup => {
+				if (_.isObject(typenameGroup) && !Array.isArray(typenameGroup)) {
+					return _.map(typenameGroup, accountGroup => {
+						if (_.isObject(accountGroup)) {
+							return _.flattenDeep(_.values(accountGroup));
+						}
+						return [];
+					});
+				} else if (Array.isArray(typenameGroup)) {
+					return typenameGroup;
+				}
+				return [];
+			}));
 
 			angular.forEach(flattened, function(item) {
 				const opening = parseFloat(item.opening_balance) || 0;
