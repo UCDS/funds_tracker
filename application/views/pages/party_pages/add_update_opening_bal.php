@@ -18,7 +18,7 @@
 				<div class="form-group col-lg-4 col-md-4 d-flex align-items-center">
 					<label for="date" class="me-2 mb-0">Select Date</label>
 					<input type="date" class="form-control" value="<?php 
-						if (!empty($this->input->post('date'))) { 
+						if ($this->input->post('date')) { 
 							echo date('Y-m-d', strtotime($this->input->post('date'))); 
 						} else { 
 							echo date('Y-m-d'); 

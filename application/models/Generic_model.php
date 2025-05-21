@@ -62,7 +62,7 @@ class Generic_model extends CI_Model{
 
 	function get_ledger_opening_balance_list() 
 	{
-		if(!empty($this->input->post('date')))
+		if($this->input->post('date'))
 		{
 			$from_date  = $this->input->post('date');
 		}else{
