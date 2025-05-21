@@ -78,7 +78,8 @@
 				</div>
 				<div class=" form-group col-lg-4 col-md-6">
 					<label for="exampleInputName2">Narration</label>
-					<input type="text" class="form-control" name="narration" ng-model="bank_bookCtrl.newBank_book.narration"/>
+					<!-- <input type="text" class="form-control" name="narration" ng-model="bank_bookCtrl.newBank_book.narration"/> -->
+					<textarea class="form-control" name="narration" ng-model="bank_bookCtrl.newBank_book.narration" style="max-width: 100%;" row="10" cols="10"> </textarea>
 				</div>
 				<div class=" form-group col-lg-4 col-md-6">
 					<label for="exampleInputName2">Instrument Type</label>
@@ -145,7 +146,8 @@
 				</div>
 				<div class=" form-group col-lg-4 col-md-6">
 					<label for="exampleInputName2">Notes</label>
-					<input type="text" class="form-control" name="notes" ng-model="bank_bookCtrl.newBank_book.notes"/>              
+					<!-- <input type="text" class="form-control" name="notes" ng-model="bank_bookCtrl.newBank_book.notes"/>               -->
+					<textarea class="form-control" name="notes" ng-model="bank_bookCtrl.newBank_book.notes" style="max-width: 100%;" row="10" cols="10"></textarea>              
 				</div>
 				<div class="col-sm-12 col-md-12">
 					<h4>Ledger
@@ -183,7 +185,7 @@
 									
 									</th>
 									<th>
-										<input type="text" ng-model="ledgerrecord.narration" style="width:70px;"/>
+										<textarea ng-model="ledgerrecord.narration" style="width:70px;" row="10" cols="10"></textarea>
 									</th>
 									<th>
 										<select required style="width:115px;" ng-model="ledgerrecord.payee_party_id" ng-options="party.party_id as party.party_name for party in bank_bookCtrl.parties">
@@ -635,8 +637,11 @@
 			self.getChangedFields = function() {
 				var changedFields = [];
 				var newRecord = self.newBank_book;
-				
-				if (self.originalRecord && newRecord && self.originalRecord.party_id != newRecord.party_id) {
+				if (!self.originalRecord || !newRecord) {
+					return changedFields;
+				}
+
+				if (self.originalRecord.party_id !== newRecord.party_id) {
 					changedFields.push({
 						field: "Party Name",
 						oldValue: self.originalRecord.party_id,
@@ -644,80 +649,90 @@
 					});
 				}
 
-				if (self.originalRecord && newRecord && self.originalRecord.narration != newRecord.narration) {
+				if (self.originalRecord.narration !== newRecord.narration) {
 					changedFields.push({
 						field: "Narration",
 						oldValue: self.originalRecord.narration,
 						newValue: newRecord.narration
 					});
 				}
-				if (self.originalRecord && newRecord && self.originalRecord.instrument_type_id != newRecord.instrument_type_id) {
+
+				if (self.originalRecord.instrument_type_id !== newRecord.instrument_type_id) {
 					changedFields.push({
 						field: "Instrument Type",
 						oldValue: self.originalRecord.instrument_type_id,
 						newValue: newRecord.instrument_type_id
 					});
 				}
-				if (self.originalRecord && newRecord && self.originalRecord.instrument_id_manual != newRecord.instrument_id_manual) {
+
+				if (self.originalRecord.instrument_id_manual !== newRecord.instrument_id_manual) {
 					changedFields.push({
 						field: "Instrument ID",
 						oldValue: self.originalRecord.instrument_id_manual,
 						newValue: newRecord.instrument_id_manual
 					});
 				}
+
 				const formattedNewDate = formatDateToString(newRecord.instrument_date);
 				const formattedOldDate = formatDateToString(self.originalRecord.instrument_date);
-				if (self.originalRecord && newRecord && formattedOldDate != formattedNewDate) {
-				 	changedFields.push({
-				 		field: "Instrument Date",
-				 		oldValue: formattedOldDate,
-				 		newValue: formattedNewDate
-				 	});
+				if (formattedOldDate !== formattedNewDate) {
+					changedFields.push({
+						field: "Instrument Date",
+						oldValue: formattedOldDate,
+						newValue: formattedNewDate
+					});
 				}
-				if (self.originalRecord && newRecord && self.originalRecord.bank_id != newRecord.bank_id) {
+
+				if (self.originalRecord.bank_id !== newRecord.bank_id) {
 					changedFields.push({
 						field: "Bank",
 						oldValue: self.originalRecord.bank_id,
 						newValue: newRecord.bank_id
 					});
 				}
-				if (self.originalRecord && newRecord && self.originalRecord.transaction_amount != newRecord.transaction_amount) {
+
+				if (self.originalRecord.transaction_amount !== newRecord.transaction_amount) {
 					changedFields.push({
 						field: "Transaction Amount",
 						oldValue: self.originalRecord.transaction_amount,
 						newValue: newRecord.transaction_amount
 					});
 				}
-				if (self.originalRecord && newRecord && self.originalRecord.clearance_status != newRecord.clearance_status) {
+
+				if (self.originalRecord.clearance_status !== newRecord.clearance_status) {
 					changedFields.push({
 						field: "Bank Clearance Status",
 						oldValue: self.originalRecord.clearance_status,
 						newValue: newRecord.clearance_status
 					});
 				}
-				const formattedNewDate_1 = formatDateToString(newRecord.clearance_date);
-				const formattedOldDate_1 = formatDateToString(self.originalRecord.clearance_date);
-				if (self.originalRecord && newRecord && formattedOldDate_1 != formattedNewDate_1) {
+
+				const formattedNewClearanceDate = formatDateToString(newRecord.clearance_date);
+				const formattedOldClearanceDate = formatDateToString(self.originalRecord.clearance_date);
+				if (formattedOldClearanceDate !== formattedNewClearanceDate) {
 					changedFields.push({
 						field: "Clearance Date",
-						oldValue: formattedOldDate_1,
-						newValue: formattedNewDate_1
+						oldValue: formattedOldClearanceDate,
+						newValue: formattedNewClearanceDate
 					});
 				}
-				if (self.originalRecord && newRecord && self.originalRecord.bill_recieved != newRecord.bill_recieved) {
+
+				if (self.originalRecord.bill_recieved !== newRecord.bill_recieved) {
 					changedFields.push({
 						field: "Bill Received",
 						oldValue: self.originalRecord.bill_recieved,
 						newValue: newRecord.bill_recieved
 					});
 				}
-				if (self.originalRecord && newRecord && self.originalRecord.notes != newRecord.notes) {
+
+				if (self.originalRecord.notes !== newRecord.notes) {
 					changedFields.push({
 						field: "Notes",
 						oldValue: self.originalRecord.notes,
 						newValue: newRecord.notes
 					});
 				}
+
 				return changedFields;
 			};
 
@@ -776,7 +791,9 @@
 						}else{
 							alert("Only numbers are allowed in amount");
 						}
-						
+						if (!self.originalledgerRecord || !self.originalledgerRecord[i]) {
+							return;
+						}
 						var originalRecord  = self.originalledgerRecord[i];
 						if (originalRecord) 
 						{
@@ -863,8 +880,6 @@
 							transaction_id: self.newBank_book.transaction_id,
 							changes: changedFields
 						};
-
-						// Send the change log to the backend via an HTTP POST request
 						$http.post('bank_book/save_ledger_transaction_changes', JSON.stringify(changeLog), {
 							headers: {
 								'Content-Type': 'application/json'

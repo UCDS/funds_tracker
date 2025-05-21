@@ -625,3 +625,24 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+ALTER TABLE `user` ADD `name` VARCHAR(150) NOT NULL AFTER `user_name`;
+
+ALTER TABLE `user` ADD `note` VARCHAR(500) NOT NULL AFTER `staff_id`;
+
+CREATE TABLE `ledger_opening_balance` (
+  `id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `ledger_account_id` int(11) NOT NULL,
+  `balance` bigint(20) NOT NULL,
+  `insert_by` int(11) NOT NULL,
+  `insert_time` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_time` datetime NOT NULL
+);
+
+ALTER TABLE `ledger_opening_balance` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `ledger_opening_balance` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `ledger_opening_balance` ADD `balance_type` SMALLINT NOT NULL AFTER `ledger_account_id`;
