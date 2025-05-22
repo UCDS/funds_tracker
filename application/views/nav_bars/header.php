@@ -70,13 +70,14 @@
 				<ul class="nav navbar-nav navbar-right">
 					<!--<li><a href="#">Dashboard</a></li>
 					<li><a href="#">Settings</a></li>
-					<li><a href="#">Profile</a></li>-->
-					<li><a href="#">Help</a></li>
+					<li><a href="#">Profile</a></li>
+					<li><a href="#">Help</a></li>-->
 					<?php
 						if($this->session->logged_in == 'YES'){
+							$session_data = $this->session->userdata();
 					?>
 						<li id="LefNaveLogOut" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">Profile
+							<a class="fa fa-user dropdown-toggle" style="color:white;" data-toggle="dropdown" href="#"> <?php echo $session_data['user_name']; ?>
 							<span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li id="LefNaveLogOut"><a href="<?php echo base_url(); ?>profile/changepassword">Change Password</a></li>

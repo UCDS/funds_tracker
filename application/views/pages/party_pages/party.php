@@ -52,6 +52,10 @@
 				<input type="email" class="form-control" ng-model="partyCtrl.newParty.email">              
 			</div>
 			<div class="form-group col-lg-4 col-md-6">
+				<label for="exampleInputEmail2">PAN</label>
+				<input type="text" class="form-control" ng-model="partyCtrl.newParty.pan">              
+			</div>
+			<div class="form-group col-lg-4 col-md-6">
 				<label for="exampleInputName2">Notes</label>
 				<input type="text" class="form-control" ng-model="partyCtrl.newParty.note"/>              
 			</div>
@@ -79,6 +83,7 @@
 							<th>Phone</th>
 							<th>Alt Phone</th>
 							<th>Email</th>
+							<th>PAN</th>
 							<th>Notes</th>
 						</tr>
 					</thead>
@@ -92,6 +97,7 @@
 							<td ng-bind="partyCtrl.newParty.phone"></td>
 							<td ng-bind="partyCtrl.newParty.alt_phone"></td>
 							<td ng-bind="partyCtrl.newParty.email"></td>
+							<td ng-bind="partyCtrl.newParty.pan"></td>
 							<td ng-bind="partyCtrl.newParty.note"></td>
 						</tr>
 						<tr ng-repeat="party in partyCtrl.partys" ng-click="partyCtrl.editRecord(party,$index)">
@@ -103,6 +109,7 @@
 							<td ng-bind="party.phone"></td>
 							<td ng-bind="party.alt_phone"></td>
 							<td ng-bind="party.email"></td>
+							<td ng-bind="party.pan"></td>
 							<td ng-bind="party.note"></td>
 						</tr>
 					</tbody>
