@@ -24,7 +24,7 @@
 							echo date('Y-m-d'); 
 						} 
 					?>" 
-					name="date" required>
+					name="date" id="select-date" required>
 				</div>
 				<div class="col-lg-4 col-md-4">
 					<input type="submit" class="btn btn-primary" value="Search" style="margin-top: 25px;">
@@ -44,6 +44,7 @@
     <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-1 ">
         <?php if (!empty($ledger_opening_balances)) : ?>
             <form method="post" action="<?= base_url('report/update_opening_balances') ?>">
+				<input type="hidden" name="date" id="hidden-date">
                 <div class="table-responsive mt-4">
                     <?php
                         $grouped_data = [];
@@ -176,3 +177,10 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+
+<script>
+    document.querySelector('form[action*="update_opening_balances"]').addEventListener('submit', function() {
+        const selectedDate = document.getElementById('select-date').value;
+        document.getElementById('hidden-date').value = selectedDate;
+    });
+</script>

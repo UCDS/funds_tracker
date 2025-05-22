@@ -334,7 +334,7 @@ class Report extends CI_Controller{
                 }
             } else {
                 $this->db->insert('ledger_opening_balance', [
-                    'date' => date('Y-m-d'),
+                    'date' => $this->input->post('date'),
                     'ledger_account_id' => $ledger_account_id,
                     'balance' => $balance,
                     'balance_type' => $balance_type,
