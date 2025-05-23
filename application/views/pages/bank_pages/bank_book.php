@@ -691,19 +691,23 @@
 					});
 				}
 
-				if (self.originalRecord.transaction_amount !== newRecord.transaction_amount) {
+				const oldAmount = parseFloat(self.originalRecord.transaction_amount).toFixed(2);
+				const newAmount = parseFloat(newRecord.transaction_amount).toFixed(2);
+				if (oldAmount !== newAmount) {
 					changedFields.push({
 						field: "Transaction Amount",
-						oldValue: self.originalRecord.transaction_amount,
-						newValue: newRecord.transaction_amount
+						oldValue: oldAmount,
+						newValue: newAmount
 					});
 				}
 
-				if (self.originalRecord.clearance_status !== newRecord.clearance_status) {
+				const oldClearance = Number(self.originalRecord.clearance_status);
+				const newClearance = Number(newRecord.clearance_status);
+				if (oldClearance !== newClearance) {
 					changedFields.push({
 						field: "Bank Clearance Status",
-						oldValue: self.originalRecord.clearance_status,
-						newValue: newRecord.clearance_status
+						oldValue: oldClearance,
+						newValue: newClearance
 					});
 				}
 
@@ -717,13 +721,16 @@
 					});
 				}
 
-				if (self.originalRecord.bill_recieved !== newRecord.bill_recieved) {
+				const oldBill = Number(self.originalRecord.bill_recieved);
+				const newBill = Number(newRecord.bill_recieved);
+				if (oldBill !== newBill) {
 					changedFields.push({
 						field: "Bill Received",
-						oldValue: self.originalRecord.bill_recieved,
-						newValue: newRecord.bill_recieved
+						oldValue: oldBill,
+						newValue: newBill
 					});
 				}
+
 
 				if (self.originalRecord.notes !== newRecord.notes) {
 					changedFields.push({
