@@ -32,7 +32,7 @@
 <?php 
 $session_data = $this->session->userdata();
 ?>
-<div class="container-fluid">
+<div class="container-fluid" style="overflow-x:hidden;">
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 ">
 			<h3 style="text-align:center;">Book Edits</h3>
 			<div class="col-lg-12">
@@ -51,7 +51,7 @@ $session_data = $this->session->userdata();
 			</form>
 		</div>
 		</div><br/>
-		<div class="container text-left" style="margin-top: 20px;">
+		<div class="container ol-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 text-left" style="margin-top: 20px;">
 		<?php 
     		$from_date = $this->session->userdata('from_date');
     		$to_date = $this->session->userdata('to_date');	

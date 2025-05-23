@@ -646,3 +646,7 @@ ALTER TABLE `ledger_opening_balance` ADD PRIMARY KEY (`id`);
 ALTER TABLE `ledger_opening_balance` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `ledger_opening_balance` ADD `balance_type` SMALLINT NOT NULL AFTER `ledger_account_id`;
+
+ALTER TABLE `party` ADD `pan` VARCHAR(12) NOT NULL AFTER `email`;
+
+ALTER TABLE `ledger_opening_balance` CHANGE `balance` `balance` DECIMAL(15,2) NOT NULL;

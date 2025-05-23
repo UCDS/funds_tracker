@@ -11,7 +11,7 @@
 
 </style>
 <div class="container">
-	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 ">
+	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 ">
 			<h3 style="text-align:center;">Add / Update Opening Balance</h3><br/>
 		<div class="col-lg-12">
 			<?php echo form_open("report/add_upd_opening_balance",array('role'=>'form','class'=>'row form-custom','id'=>'')); ?> 
@@ -41,7 +41,7 @@
 <?php endif; ?>
 
 <div class="container">
-    <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-1 ">
+    <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-2 ">
         <?php if (!empty($ledger_opening_balances)) : ?>
             <form method="post" action="<?= base_url('report/update_opening_balances') ?>">
 				<input type="hidden" name="date" id="hidden-date">

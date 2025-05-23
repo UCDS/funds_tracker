@@ -32,6 +32,9 @@ class Party_model extends CI_Model {
         if(key_exists('email', $post)){
             $this->party_information['email'] = $post['email'];        
         }
+        if(key_exists('pan', $post)){
+            $this->party_information['pan'] = $post['pan'];        
+        }
         if(key_exists('alt_phone', $post)){
             $this->party_information['alt_phone'] = $post['alt_phone'];        
         }
@@ -118,7 +121,7 @@ class Party_model extends CI_Model {
         
         $this->db->select('*')
             ->from('party')
-			->order_by("party_name", "asc");
+			->order_by("party_id", "asc");
      //       ->where($this->party_information)
 //            ->limit("$this->return_size");
         $query = $this->db->get();
