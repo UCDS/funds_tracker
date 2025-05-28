@@ -121,7 +121,7 @@ class Party_model extends CI_Model {
         
         $this->db->select('*')
             ->from('party')
-			->order_by("party_id", "asc");
+			->order_by("party_name", "asc");
      //       ->where($this->party_information)
 //            ->limit("$this->return_size");
         $query = $this->db->get();
