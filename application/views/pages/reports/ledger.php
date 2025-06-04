@@ -579,14 +579,30 @@
 		 		}
 		 	);
 		};
-		self.getOpeningBalanceTotal = function(data) {
+		var bank_statement_balance = 0;
+		self.getSumFromApi = function() {
+			return $http.get('<?php echo base_url(); ?>bank_account/get_bank_book_accounts')
+				.then(function(response) {
+					bank_statement_balance=response.data[0].statement_balance || 0;
+					return response.data[0].statement_balance || 0; 
+				}, function(error) {
+					console.error('API call failed', error);
+					return 0;
+				});
+		};
+		self.getOpeningBalanceTotal = function(data, apiSum) {
 			return _.reduce(_.flattenDeep(_.values(data)), function(sum, item) {
-				if (item.account_name) {
-					return sum = parseFloat(item.opening_balance) || 0;
+				if(item.accounttype == "Assets" && item.typename == "Bank") {
+					return bank_statement_balance;   
+				} else if (item.account_name) {
+					return sum + (parseFloat(item.opening_balance) || 0);
 				}
 				return sum;
 			}, 0);
 		};
+		self.getSumFromApi().then(function(apiSum) {
+			var total = self.getOpeningBalanceTotal(self.bankAccountsData, apiSum);
+		});
 		self.getFirstItem = function(data) {
 			let flat = _.flatten(_.flatten(_.values(data)));
 			return flat[0] || {};
@@ -609,7 +625,12 @@
 				}
 
 				if (flatItems.length > 0) {
-					total += parseFloat(flatItems[0].opening_balance) || 0;
+					var firstItem = flatItems[0];
+					if (firstItem.accounttype === "Assets" && firstItem.typename === "Bank") {
+						total += parseFloat(bank_statement_balance) || 0;
+					} else {
+						total += parseFloat(firstItem.opening_balance) || 0;
+					}
 					addedTypenames[typename] = true;
 				}
 			});
