@@ -55,7 +55,9 @@ class Report extends CI_Controller{
         $this->data['items'] = $this->generic_model->get_items_list();
         $this->data['bankaccounts'] = $this->bank_account_model->get_bank_book_accounts();
 		
-		$this->data['bank_account_id'] = $this->input->post('bank_account_id');
+        $this->data['bank_opening_balances'] = $this->generic_model->get_bank_opening_balances();
+
+        $this->data['bank_account_id'] = $this->input->post('bank_account_id');
         $this->data['bank'] = $this->input->post('bank');
         $this->data['account_name'] = $this->input->post('account_name');
         $this->data['account_number'] = $this->input->post('account_number');
@@ -289,12 +291,37 @@ class Report extends CI_Controller{
                 }
             }
 
+            $bank_accounts = $this->db->select('bank_account_id,account_name')->get('bank_account')->result();
+            $next_bank_id = 1001;
+            foreach ($bank_accounts as $bank) {
+                $bank_id = $next_bank_id++;
+                $already_exists = false;
+                foreach ($existing_balances as $bal) {
+                    if ($bal->ledger_account_name === $bank->account_name) {
+                        $already_exists = true;
+                        break;
+                    }
+                }
+                if (!$already_exists) {
+                    $dummy = new stdClass();
+                    $dummy->id = 0;
+                    $dummy->ledger_account_id = $bank_id;
+                    $dummy->ledger_account_name = $bank->account_name;
+                    $dummy->account_type = 'Assets';
+                    $dummy->balance = 0;
+                    $dummy->balance_type = 0;
+                    $dummy->user_name = '';
+                    $dummy->name = '';
+                    $dummy->updated_username = '';
+                    $dummy->updated_by_name = '';
+                    $existing_balances[] = $dummy;
+                }
+            }
             $this->data['ledger_opening_balances'] = $existing_balances;
             $this->load->view('pages/party_pages/add_update_opening_bal', $this->data);
             $this->load->view('nav_bars/footer');
         //}
     }
-
 
     public function update_opening_balances()
     {

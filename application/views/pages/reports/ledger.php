@@ -166,8 +166,14 @@
 								<tr ng-repeat="PartyData in TypePartiesData" ng-if="LedgerCtrl.recentsearch.searchBy != '7' && LedgerCtrl.recentsearch.searchBy != '8'">
 									<td ng-bind="PartyData.account_name"></td>
 									<!-- <td ng-bind="PartyData.ledger_account_id"></td> -->
-									<td ></td>
-									<td ></td>
+									<td ng-if="typename === 'Bank'" 
+										ng-bind="LedgerCtrl.getBankOpeningBalanceByAccountName(PartyData.account_name).balance_type == 1 ? 'Debit' : 'Credit'">
+									</td>
+									<td style="text-align:right;" ng-if="typename === 'Bank'" ng-bind="LedgerCtrl.getBankOpeningBalanceByAccountName(PartyData.account_name).balance"></td>
+
+									<!-- If typename not 'Bank', print empty cells to keep table layout -->
+									<td ng-if="typename !== 'Bank'"></td>
+									<td ng-if="typename !== 'Bank'"></td>
 									<td class="num-align" ng-if=" LedgerCtrl.recentsearch.searchBy == '7'" ></td>
 									<td class="num-align" ng-bind="PartyData.PayTotalCnt"></td>
 									<td class="num-align link" ng-click="LedgerCtrl.showTrnxs(PartyData,'','Debit')" ng-bind="PartyData.PayTotal | currency:''"></td>
@@ -175,8 +181,18 @@
 									<td class="num-align link" ng-click="LedgerCtrl.showTrnxs(PartyData,'','Credit')" ng-bind="PartyData.RecptTotal | currency:''"></td>
 									<td ng-bind="(parseFloat(PartyData.PayTotal) > parseFloat(PartyData.RecptTotal)) ? 'Debit' : 'Credit'"></td>
 									<td class="num-align" ng-bind="(PartyData.PayTotal - PartyData.RecptTotal) | abs | currency:''"></td>
-									<td></td>
-									<td></td>
+									
+									<td ng-if="typename === 'Bank'" id="closing_balance_type"
+										ng-bind="LedgerCtrl.getClosingBalance(PartyData.account_name, PartyData.PayTotal, PartyData.RecptTotal).type">
+									</td>
+
+									<td style="text-align:right;" ng-if="typename === 'Bank'" id="closing_balance"
+										ng-bind="LedgerCtrl.getClosingBalance(PartyData.account_name, PartyData.PayTotal, PartyData.RecptTotal).amount | currency:''">
+									</td>
+									
+									<td ng-if="typename !== 'Bank'"></td>
+									<td ng-if="typename !== 'Bank'"></td>
+
 								</tr>
 								
 								<tr ng-repeat-start="PartyData in TypePartiesData" ng-if="LedgerCtrl.recentsearch.searchBy == '7'">
@@ -254,7 +270,14 @@
 
 								<tr class="TotalRecord" ng-repeat-end >
 									<td colspan="{{LedgerCtrl.recentsearch.searchID ? 2 : 3}}" style="text-align: right;">Total</td>
-									<td><span ng-bind="(first = LedgerCtrl.getFirstItem(TypePartiesData)) && first.balance_type == 1 ? 'Debit' : (first.balance_type == 2 ? 'Credit' : ' ')"></span></td>
+									<td><span ng-bind="
+										(first = LedgerCtrl.getFirstItem(TypePartiesData)) && 
+										(first.typename === 'Bank' 
+										? (LedgerCtrl.getOpeningBalanceTotal1(TypePartiesData) < 0 ? 'Debit' : 'Credit') 
+										: (first.balance_type == 1 ? 'Debit' : (first.balance_type == 2 ? 'Credit' : ' '))
+										)
+									">
+									</span></td>
 									<td class="text-right" ng-bind="LedgerCtrl.getOpeningBalanceTotal(TypePartiesData) | currency:''"></td>
 									<td ng-if="LedgerCtrl.recentsearch.searchBy == '7'"></td>
 									<td class="num-align" ng-bind="LedgerCtrl.sumByInt(TypePartiesData,'PayTotalCnt', (LedgerCtrl.recentsearch.searchBy == '7' || LedgerCtrl.recentsearch.searchBy == '8'))"></td>
@@ -398,6 +421,16 @@
 			if(vData){
 				return vData[0].account_name;
 			}
+		};
+		self.bankOpeningBalances = <?= json_encode($bank_opening_balances) ?>;
+		self.getBankOpeningBalanceByAccountName = function(accountName) {
+			var found = self.bankOpeningBalances.find(function(item) {
+				return item.account_name === accountName;
+			});
+			if(found) {
+				return found;
+			}
+			return { balance: '', balance_type: '' };
 		};
 		self.getProjectTotalCount = function(vType, id, vArray, vTypeTotal,vTotals){
 			
@@ -565,7 +598,6 @@
 			var vTempSearch = { "ledger_account_id": item.ledger_account_id , "start_date": formatDate(self.search.startDate)};
 		 	return $http.post('<?php echo base_url(); ?>index.php/report/getOpeningBalance', vTempSearch).then(
 		 		function(response) {
-					console.log(response);
 		 			if (response.data && response.data.balance !== undefined) {
 		 				item.opening_balance = parseFloat(response.data.balance);
 						item.balance_type = parseInt(response.data.balance_type);
@@ -579,63 +611,147 @@
 		 		}
 		 	);
 		};
-		var bank_statement_balance = 0;
-		self.getSumFromApi = function() {
-			return $http.get('<?php echo base_url(); ?>bank_account/get_bank_book_accounts')
-				.then(function(response) {
-					bank_statement_balance=response.data[0].statement_balance || 0;
-					return response.data[0].statement_balance || 0; 
-				}, function(error) {
-					console.error('API call failed', error);
-					return 0;
-				});
+		// self.getOpeningBalanceTotal = function(data) {
+		// 	var total = _.reduce(_.flattenDeep(_.values(data)), function(sum, item) {
+		// 	var balance = 0;
+		// 	var balanceType = null;
+		// 	if (item.account_name) {
+		// 			sum = parseFloat(item.opening_balance) || 0;
+		// 	}
+		// 	if(item.accounttype == "Assets" && item.typename == "Bank") {
+		// 			var found = self.bankOpeningBalances.find(function(item1) {
+		// 				if (item1) {
+		// 					balance = Math.abs(parseFloat(item1.balance) || 0); // Always positive
+		// 					balanceType = item1.balance_type;
+		// 				} else {
+		// 					balance = Math.abs(parseFloat(item1.opening_balance) || 0); // Always positive
+		// 					balanceType = item1.balance_type;
+		// 				}
+		// 				if (balanceType === "1") {
+		// 					sum -= balance;
+		// 				} else if (balanceType === "2") {
+		// 					sum += balance;
+		// 				}
+		// 			});
+		// 	}
+		// 		return sum;
+    	// 	}, 0);
+    	// 	return Math.abs(total);
+		// };
+		self.getOpeningBalanceTotal = function(data) {
+			var total = _.reduce(_.flattenDeep(_.values(data)), function(sum, item) {
+				if (!item || !item.account_name) {
+					return sum;
+				}
+				var balance = 0;
+				var balanceType = null;
+				var openingBalance = parseFloat(item.opening_balance) || 0;
+				if (item.accounttype === "Assets" && item.typename === "Bank") {
+					var match = self.bankOpeningBalances.find(function(item1) {
+						return item1 && item1.account_name === item.account_name;
+					});
+
+					if (match) {
+						balance = Math.abs(parseFloat(match.balance) || 0);
+						balanceType = match.balance_type;
+					} else {
+						balance = Math.abs(openingBalance);
+						balanceType = item.balance_type || null;
+					}
+					if (balanceType === "1") {
+						sum -= balance;
+					} else if (balanceType === "2") {
+						sum += balance;
+					}
+				} else {
+					sum += openingBalance;
+				}
+				return sum;
+			}, 0);
+			return Math.abs(total);
 		};
-		self.getOpeningBalanceTotal = function(data, apiSum) {
+		self.getOpeningBalanceTotal1 = function(data) {
 			return _.reduce(_.flattenDeep(_.values(data)), function(sum, item) {
-				if(item.accounttype == "Assets" && item.typename == "Bank") {
-					return bank_statement_balance;   
-				} else if (item.account_name) {
-					return sum + (parseFloat(item.opening_balance) || 0);
+				var balance = 0;
+				var balanceType = null;
+				var found = self.bankOpeningBalances.find(function(item1) {
+					return item1.account_name === item.account_name;
+				});
+
+				if (found) {
+					balance = parseFloat(found.balance) || 0;
+					balanceType = found.balance_type;
+				} else {
+					balance = parseFloat(item.opening_balance) || 0;
+					balanceType = item.balance_type;
+				}
+				if (balanceType === "1") {
+					sum -= balance;
+				} else if (balanceType === "2") {
+					sum += balance;
+				} else {
+					sum += 0;
 				}
 				return sum;
 			}, 0);
 		};
-		self.getSumFromApi().then(function(apiSum) {
-			var total = self.getOpeningBalanceTotal(self.bankAccountsData, apiSum);
-		});
 		self.getFirstItem = function(data) {
 			let flat = _.flatten(_.flatten(_.values(data)));
 			return flat[0] || {};
 		};
 		self.getOpeningBalanceTotalByType = function(acntTypeData) {
-			var total = 0;
-			var addedTypenames = {};
+			let totalDebit = 0;
+			let totalCredit = 0;
+			let addedTypenames = {};
+
 			angular.forEach(acntTypeData, function(typenameGroup, typename) {
 				if (addedTypenames[typename]) return;
-				var flatItems = [];
+
+				let flatItems = [];
 				if (typeof typenameGroup === 'object' && !Array.isArray(typenameGroup)) {
 					angular.forEach(typenameGroup, function(accountGroup) {
 						if (Array.isArray(accountGroup)) {
 							flatItems = flatItems.concat(accountGroup);
 						}
 					});
-				} 
-				else if (Array.isArray(typenameGroup)) {
+				} else if (Array.isArray(typenameGroup)) {
 					flatItems = typenameGroup;
 				}
 
-				if (flatItems.length > 0) {
-					var firstItem = flatItems[0];
-					if (firstItem.accounttype === "Assets" && firstItem.typename === "Bank") {
-						total += parseFloat(bank_statement_balance) || 0;
+				angular.forEach(flatItems, function(item) {
+					if (!item || !item.account_name) return;
+
+					let balance = 0;
+					let balanceType = item.balance_type;
+
+					if (item.accounttype === "Assets" && item.typename === "Bank") {
+						let match = self.bankOpeningBalances.find(function(bankItem) {
+							return bankItem && bankItem.account_name === item.account_name;
+						});
+						if (match) {
+							balance = parseFloat(match.balance) || 0;
+							balanceType = match.balance_type || balanceType;
+						} else {
+							balance = parseFloat(item.opening_balance) || 0;
+						}
 					} else {
-						total += parseFloat(firstItem.opening_balance) || 0;
+						balance = parseFloat(item.opening_balance) || 0;
 					}
-					addedTypenames[typename] = true;
-				}
+
+					if (balanceType === 1 || balanceType === "1") {
+						totalDebit += balance;
+					} else if (balanceType === 2 || balanceType === "2") {
+						totalCredit += balance;
+					}
+				});
+
+				addedTypenames[typename] = true;
 			});
 
-			return total;
+			// Net balance = Debit - Credit (positive = Debit, negative = Credit)
+			let netBalance =  totalCredit - totalDebit;
+
+			return netBalance;
 		};
 		self.getFinalTotalAmountAdjusted = function(data) {
 			const isFiltered = self.recentsearch.searchBy === '7' || self.recentsearch.searchBy === '8';
@@ -643,48 +759,112 @@
 			const pay = self.sumByFloat(data, 'PayTotal', isFiltered) || 0;
 			const recpt = self.sumByFloat(data, 'RecptTotal', isFiltered) || 0;
 
-			if (opening === 0) {
-				return Math.abs(pay - recpt);
-			}
-
 			if (opening === 0 && pay === 0 && recpt === 0) return 0;
 
-			const first = self.getFirstItem(data);
-			const openingType = first.balance_type;
-			const netDiff = Math.abs(pay - recpt);
-			const netType = pay > recpt ? 'Debit' : 'Credit';
+			let openingCredit = 0;
+			let openingDebit = 0;
 
-			if (!openingType || !netType) return 0;
+			_.forEach(_.flattenDeep(_.values(data)), function(item) {
+				if (!item || !item.account_name) return;
 
-			if (
-				(openingType === 1 && netType === 'Debit') ||
-				(openingType === 2 && netType === 'Credit')
-			) {
-				return opening + netDiff;
-			} else if (openingType === 1 && netType === 'Credit') {
-				return Math.abs(opening - netDiff);
-			} else if (openingType === 2 && netType === 'Debit') {
-				return Math.abs(netDiff - opening);
+				let balance = 0;
+				let type = null;
+
+				if (item.accounttype === "Assets" && item.typename === "Bank") {
+					const match = self.bankOpeningBalances.find(function(bankItem) {
+						return bankItem && bankItem.account_name === item.account_name;
+					});
+					if (match) {
+						balance = Math.abs(parseFloat(match.balance) || 0);
+						type = match.balance_type;
+					} else {
+						balance = Math.abs(parseFloat(item.opening_balance) || 0);
+						type = item.balance_type;
+					}
+				} else {
+					balance = Math.abs(parseFloat(item.opening_balance) || 0);
+					type = item.balance_type;
+				}
+
+				if (type === "2" || type === 2) {
+					openingCredit += balance;
+				} else if (type === "1" || type === 1) {
+					openingDebit += balance;
+				}
+			});
+
+			let openingType = null;
+			if (openingCredit > openingDebit) {
+				openingType = 'Credit';
+			} else if (openingDebit > openingCredit) {
+				openingType = 'Debit';
+			} else {
+				openingType = null;
 			}
 
-			return 0;
+			const netType = pay > recpt ? 'Debit' : (recpt > pay ? 'Credit' : null);
+			const netDiff = Math.abs(pay - recpt);
+
+			if (!openingType || !netType) return netDiff;
+
+			if (openingType === netType) {
+				return opening + netDiff;
+			} else {
+				return Math.abs(opening - netDiff);
+			}
 		};
 		self.getDominantBalanceType = function(data) {
 			const isFiltered = self.recentsearch.searchBy === '7' || self.recentsearch.searchBy === '8';
 
-			const opening = self.getOpeningBalanceTotal(data) || 0;
-			const first = self.getFirstItem(data);
-			const openingType = first.balance_type;
-
 			const pay = self.sumByFloat(data, 'PayTotal', isFiltered) || 0;
 			const recpt = self.sumByFloat(data, 'RecptTotal', isFiltered) || 0;
 
+			let openingCredit = 0;
+			let openingDebit = 0;
+
+			_.forEach(_.flattenDeep(_.values(data)), function(item) {
+				if (!item || !item.account_name) return;
+
+				let balance = 0;
+				let type = null;
+
+				if (item.accounttype === "Assets" && item.typename === "Bank") {
+					const match = self.bankOpeningBalances.find(function(bankItem) {
+						return bankItem && bankItem.account_name === item.account_name;
+					});
+					if (match) {
+						balance = Math.abs(parseFloat(match.balance) || 0);
+						type = match.balance_type;
+					} else {
+						balance = Math.abs(parseFloat(item.opening_balance) || 0);
+						type = item.balance_type;
+					}
+				} else {
+					balance = Math.abs(parseFloat(item.opening_balance) || 0);
+					type = item.balance_type;
+				}
+
+				if (type === "2" || type === 2) {
+					openingCredit += balance;
+				} else if (type === "1" || type === 1) {
+					openingDebit += balance;
+				}
+			});
+
+			let opening = openingDebit > openingCredit ? openingDebit : openingCredit;
+			let openingType = null;
+
+			if (openingCredit > openingDebit) {
+				openingType = 'Credit';
+			} else if (openingDebit > openingCredit) {
+				openingType = 'Debit';
+			}
+
 			const netDiff = Math.abs(pay - recpt);
-			const netType = pay > recpt ? 1 : (pay < recpt ? 2 : null);
+			const netType = pay > recpt ? 'Debit' : (pay < recpt ? 'Credit' : null);
 
 			if (opening === 0 && (pay !== 0 || recpt !== 0)) {
-				if (pay > recpt) return 'Debit';
-				if (recpt > pay) return 'Credit';
+				return netType;
 			}
 
 			if (opening === 0 && netDiff === 0) return '';
@@ -692,9 +872,9 @@
 			if (!openingType || !netType) return '';
 
 			if (opening > netDiff) {
-				return openingType === 1 ? 'Debit' : (openingType === 2 ? 'Credit' : '');
+				return openingType;
 			} else {
-				return netType === 1 ? 'Debit' : (netType === 2 ? 'Credit' : '');
+				return netType;
 			}
 		};
 		self.getFinalTotalSumByAccountType = function(acntTypeData) {
@@ -716,21 +896,54 @@
 			}));
 
 			angular.forEach(flattened, function(item) {
-				const opening = parseFloat(item.opening_balance) || 0;
+				if (!item || !item.account_name) return;
+
+				let openingCredit = 0;
+				let openingDebit = 0;
+				let balance = 0;
+				let type = null;
+
+				if (item.accounttype === "Assets" && item.typename === "Bank") {
+					const match = self.bankOpeningBalances.find(function(bankItem) {
+						return bankItem && bankItem.account_name === item.account_name;
+					});
+					if (match) {
+						balance = Math.abs(parseFloat(match.balance) || 0);
+						type = match.balance_type;
+					} else {
+						balance = Math.abs(parseFloat(item.opening_balance) || 0);
+						type = item.balance_type;
+					}
+				} else {
+					balance = Math.abs(parseFloat(item.opening_balance) || 0);
+					type = item.balance_type;
+				}
+
+				if (type === "2" || type === 2) {
+					openingCredit += balance;
+				} else if (type === "1" || type === 1) {
+					openingDebit += balance;
+				}
+
 				const pay = parseFloat(item.PayTotal) || 0;
 				const recpt = parseFloat(item.RecptTotal) || 0;
 
-				if (opening === 0 && pay === 0 && recpt === 0) return;
+				if (balance === 0 && pay === 0 && recpt === 0) return;
 
-				const openingType = item.balance_type; // 1 = Debit, 2 = Credit
+				let openingType = null;
+				if (openingCredit > openingDebit) {
+					openingType = 'Credit';
+				} else if (openingDebit > openingCredit) {
+					openingType = 'Debit';
+				}
 
 				const netDiff = Math.abs(pay - recpt);
-				const netType = pay > recpt ? 1 : (pay < recpt ? 2 : null); // 1 = Debit, 2 = Credit
+				const netType = pay > recpt ? 'Debit' : (pay < recpt ? 'Credit' : null);
 
 				if (!openingType && netType) {
-					if (netType === 1) {
+					if (netType === 'Debit') {
 						totalDebit += netDiff;
-					} else if (netType === 2) {
+					} else if (netType === 'Credit') {
 						totalCredit += netDiff;
 					}
 					return;
@@ -739,14 +952,13 @@
 				if (!openingType || !netType) return;
 
 				let adjustedAmount = 0;
-
 				if (openingType === netType) {
-					adjustedAmount = opening + netDiff;
+					adjustedAmount = balance + netDiff;
 				} else {
-					adjustedAmount = Math.abs(opening - netDiff);
+					adjustedAmount = Math.abs(balance - netDiff);
 				}
 
-				if ((opening >= netDiff && openingType === 1) || (opening < netDiff && netType === 1)) {
+				if ((balance >= netDiff && openingType === 'Debit') || (balance < netDiff && netType === 'Debit')) {
 					totalDebit += adjustedAmount;
 				} else {
 					totalCredit += adjustedAmount;
@@ -755,15 +967,36 @@
 
 			return totalCredit - totalDebit;
 		};
-		self.sumByFloat = function(data, key, filtered) {
-			let total = 0;
-			const flatData = _.flattenDeep(_.values(data));
-			flatData.forEach(item => {
-				if (!filtered || item) {
-					total += parseFloat(item[key]) || 0;
+		self.getClosingBalance = function(accountName, payTotal, recptTotal) {
+			var opening = self.getBankOpeningBalanceByAccountName(accountName) || {};
+			var openingAmt = parseFloat(opening.balance) || 0;
+			var openingType = opening.balance_type; // "1" for Debit, "2" for Credit
+
+			var netPay = parseFloat(payTotal) || 0;
+			var netRecpt = parseFloat(recptTotal) || 0;
+			var netAmt = Math.abs(netPay - netRecpt);
+			var netType = (netPay >= netRecpt) ? "1" : "2"; // "1": Debit, "2": Credit
+
+			var finalAmt = 0;
+			var finalType = "Debit";
+
+			if (openingType === netType) {
+				finalAmt = openingAmt + netAmt;
+				finalType = (openingType === "1") ? "Debit" : "Credit";
+			} else {
+				if (openingAmt > netAmt) {
+					finalAmt = openingAmt - netAmt;
+					finalType = (openingType === "1") ? "Debit" : "Credit";
+				} else {
+					finalAmt = netAmt - openingAmt;
+					finalType = (netType === "1") ? "Debit" : "Credit";
 				}
-			});
-			return total;
+			}
+
+			return {
+				type: finalType,
+				amount: finalAmt
+			};
 		};
 		self.getGrandFinalTotalSum = function() {
 			let grandTotal = 0;
