@@ -88,7 +88,7 @@ class Generic_model extends CI_Model{
     	$ledger_results = $ledger_query->result();
 
 		$bank_query = $this->db->select('
-            lob.*, 
+            lob.ledger_account_id,lob.balance,lob.balance_type,lob.date,
             u.user_name, 
             u.name, 
             updated_by.user_name as updated_username,
