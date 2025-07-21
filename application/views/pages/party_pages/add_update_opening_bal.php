@@ -42,46 +42,47 @@
 
 <div class="container">
     <div class="col-sm-9 col-sm-offset-3 col-md-11 col-md-offset-2 ">
-        <?php if (!empty($ledger_opening_balances)) : ?>
-            <form method="post" action="<?= base_url('report/update_opening_balances') ?>">
+       <?php if (!empty($ledger_opening_balances)) : ?>
+			<form method="post" action="<?= base_url('report/update_opening_balances') ?>">
 				<input type="hidden" name="date" id="hidden-date">
-                <div class="table-responsive mt-4">
-                    <?php
-                        $grouped_data = [];
-                        foreach ($ledger_opening_balances as $row) {
-                            $grouped_data[$row->account_type][] = $row;
-                        }
+				<div class="table-responsive mt-4">
+					<?php
+						$grouped_data = [];
+						foreach ($ledger_opening_balances as $row) {
+							// Normalize account type just in case
+							$row->account_type = ucfirst(strtolower(trim($row->account_type)));
+							$grouped_data[$row->account_type][] = $row;
+						}
 
-                        $order = ['Income', 'Expenditure', 'Assets', 'Liabilities'];
-                        $sorted_grouped_data = [];
-                        foreach ($order as $type) {
-                            if (isset($grouped_data[$type])) {
-                                $sorted_grouped_data[$type] = $grouped_data[$type];
-                            }
-                        }
-                    ?>
-                    <?php foreach ($sorted_grouped_data as $account_type => $entries): ?>
-                        <h4 style="color:#e86507;"><?= ucfirst($account_type) ?></h4>
+						$order = ['Income', 'Expenditure', 'Assets', 'Liabilities'];
+						$sorted_grouped_data = [];
+						foreach ($order as $type) {
+							if (isset($grouped_data[$type])) {
+								$sorted_grouped_data[$type] = $grouped_data[$type];
+							}
+						}
+					?>
+					<?php foreach ($sorted_grouped_data as $account_type => $entries): ?>
+						<h4 style="color:#e86507;"><?= ucfirst($account_type) ?></h4>
 						<style>
 							.table {
 								table-layout: fixed;
 								width: 100%;
 							}
-
 							.table th, .table td {
 								width: 25%;
 							}
 						</style>
-                        <table class="table table-bordered table-striped" id="table-sort">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th style="text-align: center;">#</th>
-                                    <th>Ledger Account</th>
-                                    <th>Balance Type</th>
-                                    <th>Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+						<table class="table table-bordered table-striped" id="table-sort">
+							<thead class="table-dark">
+								<tr>
+									<th style="text-align: center;">#</th>
+									<th>Ledger Account</th>
+									<th>Balance Type</th>
+									<th>Balance</th>
+								</tr>
+							</thead>
+							<tbody>
 								<?php $i = 1; foreach ($entries as $entry): ?>
 									<tr>
 										<td style="text-align: center;"><?= $i++ ?></td>
@@ -103,9 +104,10 @@
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
-                        </table>
-                    <?php endforeach; ?>
-                </div>
+						</table>
+					<?php endforeach; ?>
+				</div>
+
 				<!-- Totals Display -->
 				<div class="row mt-3 mb-3">
 					<div class="col-md-6">
@@ -115,7 +117,7 @@
 						<strong style="color: red;font-size:20px;">Total Credit: ₹ <span id="credit-total">0.00</span></strong>
 					</div>
 				</div>
-				<br/>
+
 				<!-- Warning -->
 				<div id="balance-warning" class="alert alert-danger text-center mt-5" style="display:none;">
 					Debit and Credit totals must be equal or greater than 0 to save the opening balance.
@@ -125,10 +127,10 @@
 				<div class="text-center mt-4">
 					<button type="submit" class="btn btn-primary" id="save-btn" style="display:none;">Save Opening Balance</button>
 				</div><br/><br/>
-            </form>
-        <?php else: ?>
-            <div class="alert alert-info mt-4">No opening balances found.</div>
-        <?php endif; ?>
+			</form>
+		<?php else: ?>
+			<div class="alert alert-info mt-4">No opening balances found.</div>
+		<?php endif; ?>
     </div>
 </div>
 <script>
